@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - SpurtLink</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #09090b;
+            --foreground: #fafafa;
+            --card: #18181b;
+            --border: rgba(255, 255, 255, 0.1);
+            --muted: #a1a1aa;
+            --primary: #ec4899;
+            --secondary: #f97316;
+            --success: #84cc16;
+            --warning: #60a5fa;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            display: none;
+            width: 80px;
+            height: 100vh;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(9, 9, 11, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 16px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 40;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: flex;
+            }
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--card);
+            color: var(--foreground);
+        }
+
+        .nav-item.active {
+            color: #84cc16;
+            background: rgba(132, 204, 22, 0.1);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-left: 0;
+        }
+
+        @media (min-width: 1024px) {
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(9, 9, 11, 0.8);
+            padding: 1.5rem 1.5rem;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(132, 204, 22, 0.1);
+            flex-shrink: 0;
+        }
+
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
+            color: #84cc16;
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .header-text p {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .wallet-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+        }
+
+        /* ===== BALANCE CARD ===== */
+        .balance-card {
+            background: linear-gradient(135deg, rgba(24, 24, 28, 0.8), rgba(30, 30, 36, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(12px);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .balance-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .balance-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+        }
+
+        .balance-info h2 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .balance-referral {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .balance-referral .amount {
+            color: #84cc16;
+            font-weight: 600;
+        }
+
+        .balance-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 768px) {
+            .balance-actions {
+                flex-wrap: nowrap;
+            }
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #84cc16;
+            color: #000;
+            box-shadow: 0 0 20px rgba(132, 204, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #65a30d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(132, 204, 22, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--foreground);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--foreground);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+        }
+
+        .action-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .transaction-item {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .transaction-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .transaction-icon.deposit {
+            background: rgba(132, 204, 22, 0.1);
+        }
+
+        .transaction-icon.withdraw {
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        .transaction-icon.gift-sent {
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        .transaction-icon.gift-received {
+            background: rgba(132, 204, 22, 0.1);
+        }
+
+        .transaction-icon.subscription {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .transaction-icon.referral {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .transaction-icon.boost {
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-time {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        .transaction-amount.positive {
+            color: #84cc16;
+        }
+
+        .transaction-amount.negative {
+            color: var(--primary);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUp 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--foreground);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--foreground);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--success);
+            box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.1);
+        }
+
+        .preset-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .preset-btn {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--foreground);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .preset-btn:hover {
+            background: #84cc16;
+            color: #000;
+            border-color: #84cc16;
+        }
+
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .gift-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            padding: 0.75rem;
+        }
+
+        .gift-item:hover {
+            background: var(--primary) / 20%;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .gift-emoji {
+            font-size: 1.75rem;
+        }
+
+        .gift-price {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-footer button {
+            flex: 1;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--foreground);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-submit {
+            background: #84cc16;
+            color: #000;
+        }
+
+        .btn-submit:hover {
+            background: #65a30d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(132, 204, 22, 0.4);
+        }
+
+        .success-message {
+            background: rgba(132, 204, 22, 0.1);
+            border: 1px solid rgba(132, 204, 22, 0.3);
+            color: #84cc16;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-text {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item" title="Discover">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" title="Matches">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" title="Chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </a>
+            <a href="#" class="nav-item active" title="Wallet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <path d="M1 10h22"></path>
+                </svg>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>SpotPay</h1>
+                <p>Wallet & Payments</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-header">
+                <div class="balance-info">
+                    <h2>Available Balance</h2>
+                    <div class="balance-amount">$5,234.50</div>
+                    <div class="balance-referral">Referral: <span class="amount">+$342.00</span></div>
+                </div>
+                <div class="balance-actions">
+                    <button class="btn btn-primary" onclick="openModal('addMoneyModal')">
+                        <span>➕</span> Add Money
+                    </button>
+                    <button class="btn btn-secondary" onclick="openModal('withdrawModal')">
+                        <span>⬆️</span> Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-card" onclick="openModal('giftModal')">
+                <span class="action-icon">🎁</span>
+                <span class="action-label">Send Gift</span>
+            </button>
+            <button class="action-card" onclick="alert('Upgrade to Premium')">
+                <span class="action-icon">⭐</span>
+                <span class="action-label">Upgrade</span>
+            </button>
+            <button class="action-card" onclick="alert('View referral program')">
+                <span class="action-icon">👥</span>
+                <span class="action-label">Referrals</span>
+            </button>
+            <button class="action-card" onclick="alert('View transaction history')">
+                <span class="action-icon">📋</span>
+                <span class="action-label">History</span>
+            </button>
+        </div>
+
+        <!-- Transactions -->
+        <h2 class="section-title">Recent Transactions</h2>
+        <div class="transactions-list">
+            <div class="transaction-item">
+                <div class="transaction-left">
+                    <div class="transaction-icon deposit">💰</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Deposit</div>
+                        <div class="transaction-time">Today at 2:45 PM</div>
+                    </div>
+                </div>
+                <div class="transaction-amount positive">+$100.00</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-left">
+                    <div class="transaction-icon gift-sent">🎁</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Gift Sent to Sarah</div>
+                        <div class="transaction-time">Today at 1:20 PM</div>
+                    </div>
+                </div>
+                <div class="transaction-amount negative">-$10.00</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-left">
+                    <div class="transaction-icon subscription">✨</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Premium Subscription</div>
+                        <div class="transaction-time">Yesterday at 12:00 AM</div>
+                    </div>
+                </div>
+                <div class="transaction-amount negative">-$9.99</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-left">
+                    <div class="transaction-icon gift-received">🎉</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Gift Received from Mike</div>
+                        <div class="transaction-time">3 days ago at 6:35 PM</div>
+                    </div>
+                </div>
+                <div class="transaction-amount positive">+$5.00</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-left">
+                    <div class="transaction-icon referral">🌟</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Referral Bonus</div>
+                        <div class="transaction-time">5 days ago at 3:10 PM</div>
+                    </div>
+                </div>
+                <div class="transaction-amount positive">+$25.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Money Modal -->
+    <div id="addMoneyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Money</h2>
+                <button class="modal-close" onclick="closeModal('addMoneyModal')">✕</button>
+            </div>
+            <div class="success-message" id="addMoneySuccess">✓ Successfully added to your wallet!</div>
+            <form onsubmit="handleAddMoney(event)">
+                <div class="form-group">
+                    <label class="form-label">Amount (USD)</label>
+                    <input type="number" id="addAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button type="button" class="preset-btn" onclick="setAmount('addAmount', 10)">$10</button>
+                        <button type="button" class="preset-btn" onclick="setAmount('addAmount', 25)">$25</button>
+                        <button type="button" class="preset-btn" onclick="setAmount('addAmount', 50)">$50</button>
+                        <button type="button" class="preset-btn" onclick="setAmount('addAmount', 100)">$100</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button type="button" class="form-input" style="padding: 1rem; background: rgba(132, 204, 22, 0.1); border: 1px solid #84cc16; cursor: pointer; border-radius: 8px;">
+                            💳 Card
+                        </button>
+                        <button type="button" class="form-input" style="padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; border-radius: 8px;">
+                            📱 M-Pesa
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addMoneyModal')">Cancel</button>
+                    <button type="submit" class="btn-submit">Add Money</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Withdraw</h2>
+                <button class="modal-close" onclick="closeModal('withdrawModal')">✕</button>
+            </div>
+            <div class="success-message" id="withdrawSuccess">✓ Withdrawal initiated successfully!</div>
+            <form onsubmit="handleWithdraw(event)">
+                <div class="form-group">
+                    <label class="form-label">Amount (USD)</label>
+                    <input type="number" id="withdrawAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
+                    <p class="info-text">Available: $5,234.50</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('withdrawModal')">Cancel</button>
+                    <button type="submit" class="btn-submit">Withdraw</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gift Modal -->
+    <div id="giftModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Send a Gift</h2>
+                <button class="modal-close" onclick="closeModal('giftModal')">✕</button>
+            </div>
+            <div class="gift-grid">
+                <button type="button" class="gift-item" onclick="selectGift('☕', '$3')">
+                    <span class="gift-emoji">☕</span>
+                    <span class="gift-price">$3</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('🍿', '$5')">
+                    <span class="gift-emoji">🍿</span>
+                    <span class="gift-price">$5</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('🍕', '$7')">
+                    <span class="gift-emoji">🍕</span>
+                    <span class="gift-price">$7</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('🎂', '$10')">
+                    <span class="gift-emoji">🎂</span>
+                    <span class="gift-price">$10</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('💐', '$15')">
+                    <span class="gift-emoji">💐</span>
+                    <span class="gift-price">$15</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('💎', '$25')">
+                    <span class="gift-emoji">💎</span>
+                    <span class="gift-price">$25</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('🏆', '$50')">
+                    <span class="gift-emoji">🏆</span>
+                    <span class="gift-price">$50</span>
+                </button>
+                <button type="button" class="gift-item" onclick="selectGift('👑', '$100')">
+                    <span class="gift-emoji">👑</span>
+                    <span class="gift-price">$100</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.querySelector(`#${modalId} .success-message`)?.classList.remove('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function setAmount(inputId, amount) {
+            document.getElementById(inputId).value = amount;
+        }
+
+        function handleAddMoney(e) {
+            e.preventDefault();
+            const amount = document.getElementById('addAmount').value;
+            document.getElementById('addMoneySuccess').classList.add('show');
+            setTimeout(() => closeModal('addMoneyModal'), 1500);
+        }
+
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const amount = document.getElementById('withdrawAmount').value;
+            document.getElementById('withdrawSuccess').classList.add('show');
+            setTimeout(() => closeModal('withdrawModal'), 1500);
+        }
+
+        function selectGift(emoji, price) {
+            alert(`Selected ${emoji} for ${price}`);
+            closeModal('giftModal');
+        }
+
+        // Close modal when clicking background
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover - SpurtLinks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 240 6% 4%;
+            --foreground: 0 0% 98%;
+            --card: 240 6% 10%;
+            --card-foreground: 0 0% 98%;
+            --primary: 350 89% 60%;
+            --secondary: 29 97% 60%;
+            --muted: 240 4% 16%;
+            --muted-foreground: 240 5% 64.9%;
+            --border: 240 4% 16%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 100vh;
+            background: hsl(var(--card)) / 50%;
+            backdrop-filter: blur(40px);
+            border-right: 1px solid hsl(var(--border));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 40;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .sidebar-logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.25);
+        }
+
+        .sidebar-logo-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 24px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: transparent;
+            border: none;
+            color: hsl(var(--muted-foreground));
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: hsl(var(--muted));
+            color: hsl(var(--foreground));
+        }
+
+        .nav-item.active {
+            color: hsl(var(--primary));
+            background: hsl(var(--primary)) / 10%;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 32px;
+            background: hsl(var(--primary));
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sidebar-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid hsl(var(--border));
+            padding: 12px 0;
+        }
+
+        /* ===== MOBILE HEADER ===== */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: hsl(var(--background)) / 80%;
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid hsl(var(--border));
+            z-index: 40;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 16px;
+            }
+        }
+
+        .mobile-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: hsl(var(--foreground));
+        }
+
+        .mobile-header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+        }
+
+        .mobile-header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: hsl(var(--background)) / 80%;
+            backdrop-filter: blur(40px);
+            border-top: 1px solid hsl(var(--border));
+            justify-content: space-around;
+            align-items: center;
+            z-index: 40;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-nav {
+                display: flex;
+            }
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: hsl(var(--muted-foreground));
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .mobile-nav-item:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .mobile-nav-item.active {
+            color: hsl(var(--primary));
+        }
+
+        .mobile-nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            margin-left: 80px;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                margin-left: 0;
+                padding-top: 64px;
+                padding-bottom: 80px;
+            }
+        }
+
+        .page-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* ===== SWIPE CARD LAYOUT ===== */
+        .swipe-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: calc(100vh - 80px);
+            padding: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .swipe-container {
+                min-height: calc(100vh - 64px - 80px);
+            }
+        }
+
+        .swipe-card-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+        }
+
+        .swipe-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: hsl(var(--card)) / 50%;
+            backdrop-filter: blur(40px);
+            border: 1px solid hsl(var(--border));
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.1s;
+            z-index: 1;
+        }
+
+        .swipe-card:active {
+            cursor: grabbing;
+        }
+
+        .swipe-card-image {
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            position: relative;
+        }
+
+        .swipe-label {
+            position: absolute;
+            font-size: 32px;
+            font-weight: 900;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .swipe-label.like {
+            color: hsl(132, 76%, 36%);
+            top: 20px;
+            left: 20px;
+            transform: rotate(-20deg);
+        }
+
+        .swipe-label.nope {
+            color: hsl(0, 84.2%, 60.2%);
+            top: 20px;
+            right: 20px;
+            transform: rotate(20deg);
+        }
+
+        .swipe-card-content {
+            padding: 20px;
+            height: 30%;
+        }
+
+        .swipe-card-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .swipe-card-info {
+            color: hsl(var(--muted-foreground));
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .swipe-card-interests {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .interest-tag {
+            background: hsl(var(--primary)) / 10%;
+            color: hsl(var(--primary));
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+            padding: 0 32px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: hsl(var(--card)) / 50%;
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--muted-foreground));
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 24px;
+        }
+
+        .action-btn:hover {
+            background: hsl(var(--card)) / 70%;
+            color: hsl(var(--foreground));
+            transform: scale(1.1);
+        }
+
+        .action-btn.like {
+            background: hsl(132, 76%, 36%) / 10%;
+            color: hsl(132, 76%, 36%);
+        }
+
+        .action-btn.like:hover {
+            background: hsl(132, 76%, 36%) / 20%;
+        }
+
+        .action-btn.superlike {
+            background: hsl(var(--primary)) / 10%;
+            color: hsl(var(--primary));
+            width: 64px;
+            height: 64px;
+        }
+
+        .action-btn.superlike:hover {
+            background: hsl(var(--primary)) / 20%;
+        }
+
+        .action-btn.pass {
+            background: hsl(0, 84.2%, 60.2%) / 10%;
+            color: hsl(0, 84.2%, 60.2%);
+        }
+
+        .action-btn.pass:hover {
+            background: hsl(0, 84.2%, 60.2%) / 20%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="#" class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L3 7V12C3 19.7 12 22 12 22S21 19.7 21 12V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 12L10 15L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" title="Discover">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+            </a>
+            <a href="#" class="nav-item" title="Matches">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </a>
+            <a href="#" class="nav-item" title="Chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </a>
+            <a href="#" class="nav-item" title="Wallet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><rect x="1" y="4" width="22" height="6"/></svg>
+            </a>
+            <a href="#" class="nav-item" title="Profile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="#" class="nav-item" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m6.08 0l4.24-4.24M1 12h6m6 0h6m-16.78 7.78l4.24-4.24m6.08 0l4.24 4.24"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <a href="#" class="mobile-header-brand">
+            <div class="mobile-header-logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L3 7V12C3 19.7 12 22 12 22S21 19.7 21 12V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 12L10 15L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <span class="mobile-header-title">SpurtLinks</span>
+        </a>
+        <button class="mobile-menu-btn">☰</button>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="page-container">
+            <div class="swipe-container">
+                <div class="swipe-card-wrapper">
+                    <div class="swipe-card" id="card1">
+                        <div class="swipe-card-image">
+                            👩
+                            <div class="swipe-label like">LIKE</div>
+                            <div class="swipe-label nope">NOPE</div>
+                        </div>
+                        <div class="swipe-card-content">
+                            <div class="swipe-card-name">Sarah Kimani, 26</div>
+                            <div class="swipe-card-info">15 km away • Nairobi</div>
+                            <div class="swipe-card-interests">
+                                <span class="interest-tag">Photography</span>
+                                <span class="interest-tag">Travel</span>
+                                <span class="interest-tag">Art</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swipe-card" id="card2" style="z-index: 0;">
+                        <div class="swipe-card-image">
+                            👱
+                            <div class="swipe-label like">LIKE</div>
+                            <div class="swipe-label nope">NOPE</div>
+                        </div>
+                        <div class="swipe-card-content">
+                            <div class="swipe-card-name">Jessica Mwai, 24</div>
+                            <div class="swipe-card-info">8 km away • Nairobi</div>
+                            <div class="swipe-card-interests">
+                                <span class="interest-tag">Fitness</span>
+                                <span class="interest-tag">Music</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn pass">❌</button>
+                <button class="action-btn superlike">⭐</button>
+                <button class="action-btn like">❤️</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+            <span>Discover</span>
+        </button>
+        <button class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Matches</span>
+        </button>
+        <button class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Chat</span>
+        </button>
+        <button class="mobile-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><rect x="1" y="4" width="22" height="6"/></svg>
+            <span>Wallet</span>
+        </button>
+    </nav>
+
+    <script>
+        let currentX = 0;
+        let currentY = 0;
+        let startX = 0;
+        let startY = 0;
+        let isDragging = false;
+
+        const card = document.getElementById('card1');
+
+        card.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const moveX = e.clientX - startX;
+            const moveY = e.clientY - startY;
+            const rotation = moveX * 0.1;
+            
+            card.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${rotation}deg)`;
+
+            const likeLabel = card.querySelector('.swipe-label.like');
+            const nopeLabel = card.querySelector('.swipe-label.nope');
+
+            if (moveX > 50) {
+                likeLabel.style.opacity = Math.min(1, moveX / 100);
+            } else {
+                likeLabel.style.opacity = 0;
+            }
+
+            if (moveX < -50) {
+                nopeLabel.style.opacity = Math.min(1, -moveX / 100);
+            } else {
+                nopeLabel.style.opacity = 0;
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const moveX = e.clientX - startX;
+
+            if (Math.abs(moveX) > 100) {
+                card.style.transition = 'all 0.3s ease-out';
+                const direction = moveX > 0 ? 1 : -1;
+                card.style.transform = `translate(${direction * 500}px, ${(e.clientY - startY) * 1.5}px) rotate(${direction * 20}deg)`;
+                card.style.opacity = '0';
+                
+                setTimeout(() => {
+                    card.style.transition = 'none';
+                    card.style.transform = 'translate(0, 0) rotate(0deg)';
+                    card.style.opacity = '1';
+                }, 300);
+            } else {
+                card.style.transition = 'all 0.2s ease-out';
+                card.style.transform = 'translate(0, 0) rotate(0deg)';
+            }
+        });
+
+        // Action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                card.style.transition = 'all 0.3s ease-out';
+                if (btn.classList.contains('pass')) {
+                    card.style.transform = 'translate(-500px, 100px) rotate(-20deg)';
+                } else if (btn.classList.contains('superlike')) {
+                    card.style.transform = 'translate(0, -500px) scale(0.5)';
+                } else {
+                    card.style.transform = 'translate(500px, 100px) rotate(20deg)';
+                }
+                card.style.opacity = '0';
+                
+                setTimeout(() => {
+                    card.style.transition = 'none';
+                    card.style.transform = 'translate(0, 0) rotate(0deg)';
+                    card.style.opacity = '1';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

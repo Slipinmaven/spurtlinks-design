@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SpurtLinks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --rose-500: #ec4899;
+            --rose-600: #be185d;
+            --orange-400: #f97316;
+            --lime-400: #84cc16;
+            --lime-500: #65a30d;
+            --amber-400: #fbbf24;
+            --amber-500: #f59e0b;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --muted-foreground: #a1a1aa;
+            --foreground: #fafafa;
+            --background: #09090b;
+            --muted: #27272a;
+            --card: #18181b;
+            --border: rgba(255, 255, 255, 0.1);
+            --destructive: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.5;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--rose-500);
+            flex-shrink: 0;
+        }
+
+        .header-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-text p {
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--card);
+            padding: 24px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-info p {
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 0;
+            background: none;
+            border: none;
+            color: var(--muted-foreground);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--foreground);
+        }
+
+        .tab.active {
+            color: var(--rose-500);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--rose-500);
+        }
+
+        .filters {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .filters {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--muted-foreground);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px 0 48px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: rgba(39, 39, 42, 0.5);
+            color: var(--foreground);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: var(--card);
+            border-color: var(--rose-500);
+        }
+
+        .select {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--foreground);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .select:hover {
+            border-color: var(--rose-500);
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: var(--rose-500);
+        }
+
+        .reports-list {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--card);
+            overflow: hidden;
+        }
+
+        .report-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--muted);
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted-foreground);
+            font-weight: 600;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .report-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .report-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .report-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--amber-400);
+        }
+
+        .badge.reviewing {
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--blue-400);
+        }
+
+        .badge.resolved {
+            background: rgba(132, 204, 22, 0.1);
+            color: var(--lime-400);
+        }
+
+        .report-reason {
+            font-size: 13px;
+            color: var(--muted-foreground);
+            margin-bottom: 4px;
+        }
+
+        .report-description {
+            font-size: 13px;
+            color: var(--muted-foreground);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .date {
+            font-size: 12px;
+            color: var(--muted-foreground);
+            margin-right: 12px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--muted-foreground);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover {
+            background: var(--muted);
+            color: var(--foreground);
+        }
+
+        .menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-width: 200px;
+            z-index: 20;
+            margin-top: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--foreground);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .menu-item:hover {
+            background: var(--muted);
+        }
+
+        .menu-item.danger {
+            color: var(--destructive);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            color: var(--lime-400);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--muted-foreground);
+            font-size: 14px;
+        }
+
+        .menu-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>Admin Dashboard</h1>
+                <p>Moderation & User Management</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon" style="color: var(--blue-400);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3>12</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon" style="color: var(--amber-400);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Pending Reports</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon" style="color: var(--lime-400);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3>8</h3>
+                        <p>Resolved Today</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon" style="color: var(--rose-500);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3>2</h3>
+                        <p>Banned Users</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('reports')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Reports
+            </button>
+            <button class="tab" onclick="switchTab('users')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Users
+            </button>
+        </div>
+
+        <!-- Reports Content -->
+        <div id="reportsTab">
+            <div class="filters">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search reports..." onkeyup="filterReports()">
+                </div>
+                <select class="select" id="statusFilter" onchange="filterReports()">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="reviewing">Reviewing</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+            </div>
+
+            <div class="reports-list">
+                <div id="reportsList">
+                    <!-- Reports will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Content -->
+        <div id="usersTab" class="hidden">
+            <div style="text-align: center; padding: 48px 24px; color: var(--muted-foreground);">
+                <p>Users management coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mockReports = [
+            {
+                id: 'r1',
+                reportedUser: { name: 'Sarah M.', photos: ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'] },
+                reportedBy: { name: 'John D.' },
+                reason: 'inappropriate_content',
+                description: 'User posted offensive content on their profile',
+                status: 'pending',
+                createdAt: new Date(Date.now() - 3600000)
+            },
+            {
+                id: 'r2',
+                reportedUser: { name: 'Mike T.', photos: ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop'] },
+                reportedBy: { name: 'Emma R.' },
+                reason: 'harassment',
+                description: 'Repeated unwanted messages and advances',
+                status: 'reviewing',
+                createdAt: new Date(Date.now() - 7200000)
+            },
+            {
+                id: 'r3',
+                reportedUser: { name: 'Alex K.', photos: ['https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop'] },
+                reportedBy: { name: 'Lisa P.' },
+                reason: 'fake_profile',
+                description: 'Photos appear to be fake or stolen',
+                status: 'resolved',
+                createdAt: new Date(Date.now() - 86400000)
+            }
+        ];
+
+        let allReports = [...mockReports];
+
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - new Date(date);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        function renderReports() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filtered = allReports.filter(report => {
+                const matchesSearch = report.reportedUser.name.toLowerCase().includes(searchTerm);
+                const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            const reportsList = document.getElementById('reportsList');
+            
+            if (filtered.length === 0) {
+                reportsList.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <h3>All clear!</h3>
+                        <p>No reports match your filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            reportsList.innerHTML = filtered.map((report, index) => {
+                const reasonText = report.reason.replace(/_/g, ' ');
+                return `
+                    <div class="report-item">
+                        <div class="avatar">
+                            <img src="${report.reportedUser.photos[0]}" alt="${report.reportedUser.name}">
+                        </div>
+                        <div class="report-content">
+                            <div class="report-header">
+                                <span class="report-name">${report.reportedUser.name}</span>
+                                <span class="badge ${report.status}">
+                                    ${getStatusIcon(report.status)}
+                                    ${report.status}
+                                </span>
+                            </div>
+                            <div class="report-reason">
+                                <strong>${reasonText}</strong> • Reported by ${report.reportedBy.name}
+                            </div>
+                            <div class="report-description">${report.description}</div>
+                        </div>
+                        <div class="date">${formatDate(report.createdAt)}</div>
+                        <div class="menu-wrapper">
+                            <button class="menu-btn" onclick="toggleMenu('menu${index}')">
+                                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;">
+                                    <circle cx="12" cy="5" r="2"></circle>
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                    <circle cx="12" cy="19" r="2"></circle>
+                                </svg>
+                            </button>
+                            <div id="menu${index}" class="menu hidden">
+                                <button class="menu-item" onclick="handleAction('${report.id}', 'review')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    Review
+                                </button>
+                                <button class="menu-item" onclick="handleAction('${report.id}', 'resolve')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    Resolve
+                                </button>
+                                <button class="menu-item" onclick="handleAction('${report.id}', 'warn')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                    Issue Warning
+                                </button>
+                                <button class="menu-item danger" onclick="handleAction('${report.id}', 'ban')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                    Ban User
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        }
+
+        function getStatusIcon(status) {
+            if (status === 'pending') return '⏱️';
+            if (status === 'reviewing') return '👁️';
+            if (status === 'resolved') return '✓';
+            return '';
+        }
+
+        function filterReports() {
+            renderReports();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            const btn = event.target.closest('.tab');
+            btn.classList.add('active');
+            
+            document.getElementById('reportsTab').classList.toggle('hidden', tab !== 'reports');
+            document.getElementById('usersTab').classList.toggle('hidden', tab !== 'users');
+        }
+
+        function toggleMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            document.querySelectorAll('.menu').forEach(m => {
+                if (m !== menu) m.classList.add('hidden');
+            });
+            menu.classList.toggle('hidden');
+        }
+
+        function handleAction(reportId, action) {
+            const report = allReports.find(r => r.id === reportId);
+            if (!report) return;
+
+            if (action === 'review') {
+                report.status = 'reviewing';
+                alert('Report marked as reviewing');
+            } else if (action === 'resolve') {
+                report.status = 'resolved';
+                alert('Report resolved');
+            } else if (action === 'warn') {
+                alert('Warning issued to ' + report.reportedUser.name);
+            } else if (action === 'ban') {
+                alert('User ' + report.reportedUser.name + ' has been banned');
+            }
+
+            renderReports();
+            document.querySelectorAll('.menu').forEach(m => m.classList.add('hidden'));
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-wrapper')) {
+                document.querySelectorAll('.menu').forEach(m => m.classList.add('hidden'));
+            }
+        });
+
+        // Initial render
+        renderReports();
+    </script>
+</body>
+</html>
