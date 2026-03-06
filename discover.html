@@ -13,41 +13,6 @@
         }
 
         :root {
-            /* Light theme (default) */
-            --background: 240 6% 4%;
-            --foreground: 9 9 11;
-            --card: 255 255 255;
-            --card-foreground: 9 9 11;
-            --popover: 255 255 255;
-            --popover-foreground: 9 9 11;
-            --primary: 350 89% 60%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 240 4.8% 95.9%;
-            --secondary-foreground: 240 5.9% 10%;
-            --muted: 240 4.8% 95.9%;
-            --muted-foreground: 240 3.8% 46.1%;
-            --accent: 83 78% 68%;
-            --accent-foreground: 0 0% 0%;
-            --destructive: 0 84.2% 60.2%;
-            --destructive-foreground: 0 0% 98%;
-            --border: 240 5.9% 90%;
-            --input: 240 5.9% 90%;
-            --ring: 350 89% 60%;
-            --radius: 0.75rem;
-            --rose-500: #ec4899;
-            --lime-400: #bef264;
-            --orange-400: #fb923c;
-            --blue-400: #60a5fa;
-            --amber-500: #f59e0b;
-            --purple-500: #a855f7;
-            
-            /* RGB values for rgba usage */
-            --background-rgb: 250, 250, 250;
-            --card-rgb: 255, 255, 255;
-            --muted-rgb: 240, 240, 245;
-        }
-
-        .dark {
             --background: 240 6% 4%;
             --foreground: 0 0% 98%;
             --card: 240 6% 10%;
@@ -62,8 +27,6 @@
             --muted-foreground: 240 5% 64.9%;
             --accent: 83 78% 68%;
             --accent-foreground: 0 0% 0%;
-            --destructive: 0 62.8% 30.6%;
-            --destructive-foreground: 0 0% 98%;
             --border: 240 4% 16%;
             --input: 240 4% 16%;
             --ring: 350 89% 60%;
@@ -71,21 +34,26 @@
             --background-rgb: 10, 10, 15;
             --card-rgb: 26, 26, 35;
             --muted-rgb: 40, 40, 50;
+            
+            --rose-500: #ec4899;
+            --lime-400: #bef264;
+            --orange-400: #fb923c;
+            --blue-400: #60a5fa;
+            --purple-500: #a855f7;
+            --amber-500: #f59e0b;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: hsl(var(--background));
             color: hsl(var(--foreground));
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
-            transition: background-color 0.2s, border-color 0.2s;
             overflow: hidden;
         }
 
-        /* Desktop Sidebar */
         .sidebar {
             width: 80px;
             height: 100vh;
@@ -98,7 +66,6 @@
             border-right: 1px solid hsla(var(--border), 0.5);
             background: hsla(var(--card), 0.5);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
         }
 
         .logo-area {
@@ -166,7 +133,6 @@
             height: 32px;
             border-radius: 0 4px 4px 0;
             background: hsl(var(--primary));
-            animation: slideIn 0.3s ease;
         }
 
         .nav-item svg {
@@ -184,12 +150,12 @@
             font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             white-space: nowrap;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s;
             z-index: 50;
+            border: 1px solid hsla(var(--border), 0.5);
         }
 
         .nav-item:hover .tooltip {
@@ -201,8 +167,7 @@
             border-top: 1px solid hsla(var(--border), 0.5);
         }
 
-        /* Main Content */
-        .main-content {
+        .main-wrapper {
             flex: 1;
             margin-left: 80px;
             display: flex;
@@ -211,15 +176,6 @@
             overflow: hidden;
         }
 
-        .discover-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: hsl(var(--background));
-        }
-
-        /* Header */
         .discover-header {
             display: flex;
             align-items: center;
@@ -227,8 +183,8 @@
             border-bottom: 1px solid hsla(var(--border), 0.5);
             background: hsla(var(--background), 0.8);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             padding: 20px 24px;
+            flex-shrink: 0;
         }
 
         .header-title h1 {
@@ -268,9 +224,7 @@
             height: 20px;
         }
 
-        /* Card Stack */
         .card-stack {
-            position: relative;
             flex: 1;
             overflow: hidden;
             padding: 24px;
@@ -289,8 +243,6 @@
             width: 100%;
             cursor: grab;
             user-select: none;
-            -webkit-user-select: none;
-            touch-action: pan-y;
         }
 
         .swipe-card:active {
@@ -304,7 +256,7 @@
             overflow: hidden;
             border-radius: 24px;
             background: hsl(var(--card));
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
         .card-photo {
@@ -319,7 +271,6 @@
             object-fit: cover;
         }
 
-        /* Photo indicators */
         .photo-indicators {
             position: absolute;
             top: 16px;
@@ -335,14 +286,12 @@
             flex: 1;
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.4);
-            transition: all 0.2s;
         }
 
         .indicator.active {
             background: white;
         }
 
-        /* Photo navigation */
         .photo-nav {
             position: absolute;
             inset: 0;
@@ -355,7 +304,6 @@
             width: 50%;
         }
 
-        /* Gradient overlay */
         .gradient-overlay {
             position: absolute;
             inset: 0;
@@ -364,7 +312,6 @@
             z-index: 10;
         }
 
-        /* Swipe indicators */
         .like-indicator {
             position: absolute;
             top: 32px;
@@ -372,9 +319,8 @@
             border: 4px solid var(--lime-400);
             border-radius: 12px;
             padding: 8px 16px;
-            background: transparent;
             z-index: 20;
-            pointer-events: none;
+            opacity: 0;
         }
 
         .like-indicator span {
@@ -390,9 +336,8 @@
             border: 4px solid var(--rose-500);
             border-radius: 12px;
             padding: 8px 16px;
-            background: transparent;
             z-index: 20;
-            pointer-events: none;
+            opacity: 0;
         }
 
         .nope-indicator span {
@@ -401,7 +346,6 @@
             color: var(--rose-500);
         }
 
-        /* User info */
         .user-info {
             position: absolute;
             bottom: 0;
@@ -488,7 +432,6 @@
             font-size: 12px;
             font-weight: 500;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             border: none;
         }
 
@@ -505,7 +448,6 @@
             justify-content: center;
             cursor: pointer;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             transition: background 0.2s;
         }
 
@@ -518,13 +460,13 @@
             height: 24px;
         }
 
-        /* Action Buttons */
         .action-buttons {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 16px;
             padding-bottom: 32px;
+            flex-shrink: 0;
         }
 
         .action-btn {
@@ -616,72 +558,11 @@
             height: 20px;
         }
 
-        .action-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Empty State */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-        }
-
-        .empty-icon {
-            width: 96px;
-            height: 96px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: hsla(350, 89%, 60%, 0.1);
-            margin-bottom: 24px;
-            color: hsl(var(--primary));
-        }
-
-        .empty-icon svg {
-            width: 48px;
-            height: 48px;
-        }
-
-        .empty-state h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: hsl(var(--foreground));
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            color: hsl(var(--muted-foreground));
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .refresh-btn {
-            padding: 12px 24px;
-            border-radius: 9999px;
-            background: hsl(var(--primary));
-            color: white;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .refresh-btn:hover {
-            background: #e11d48;
-        }
-
-        /* Sheet/Modal */
         .sheet-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
             z-index: 50;
             display: none;
         }
@@ -802,69 +683,61 @@
             margin-top: 32px;
         }
 
-        /* Theme toggle */
-        .theme-toggle {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 96px;
+            height: 96px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: hsl(var(--muted-foreground));
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-            border: none;
-            margin-top: 8px;
+            border-radius: 50%;
+            background: hsla(350, 89%, 60%, 0.1);
+            margin-bottom: 24px;
+            color: hsl(var(--primary));
         }
 
-        .theme-toggle:hover {
-            background: hsl(var(--muted));
+        .empty-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .empty-state h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
             color: hsl(var(--foreground));
+            margin-bottom: 8px;
         }
 
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
+        .empty-state p {
+            color: hsl(var(--muted-foreground));
+            font-size: 14px;
+            margin-bottom: 24px;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 1024px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
+        .refresh-btn {
+            padding: 12px 24px;
+            border-radius: 9999px;
+            background: hsl(var(--primary));
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <!-- Desktop Sidebar -->
     <aside class="sidebar">
         <div class="logo-area">
-            <a href="/discover" class="logo">
+            <a href="#" class="logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
@@ -872,7 +745,7 @@
         </div>
         
         <nav class="nav-menu">
-            <a href="/discover" class="nav-item active">
+            <a href="#" class="nav-item active">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M12 2v20M2 12h20"/>
@@ -880,21 +753,21 @@
                 <span class="tooltip">Discover</span>
             </a>
             
-            <a href="/matches" class="nav-item">
+            <a href="#" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
                 <span class="tooltip">Matches</span>
             </a>
             
-            <a href="/chat" class="nav-item">
+            <a href="#" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
                 <span class="tooltip">Chat</span>
             </a>
             
-            <a href="/wallet" class="nav-item">
+            <a href="#" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                     <line x1="16" y1="12" x2="16" y2="12.01"/>
@@ -902,7 +775,7 @@
                 <span class="tooltip">Wallet</span>
             </a>
             
-            <a href="/profile" class="nav-item">
+            <a href="#" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
@@ -912,186 +785,154 @@
         </nav>
         
         <div class="settings-area">
-            <a href="/settings" class="nav-item">
+            <a href="#" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
                 <span class="tooltip">Settings</span>
             </a>
-            
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
-                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/>
-                    <line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-                <svg class="moon-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="discover-container">
-            <!-- Header -->
-            <header class="discover-header">
-                <div class="header-title">
-                    <h1>Discover</h1>
-                    <p>8 profiles near you</p>
-                </div>
-                
-                <button class="filter-button" onclick="toggleFilter()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="22 3 2 3 10 13 10 21 14 18 14 13 22 3"/>
-                    </svg>
-                </button>
-            </header>
+    <div class="main-wrapper">
+        <header class="discover-header">
+            <div class="header-title">
+                <h1>Discover</h1>
+                <p>8 profiles near you</p>
+            </div>
+            
+            <button class="filter-button" onclick="toggleFilter()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="22 3 2 3 10 13 10 21 14 18 14 13 22 3"/>
+                </svg>
+            </button>
+        </header>
 
-            <!-- Card Stack -->
-            <div class="card-stack">
-                <div class="card-container">
-                    <!-- Card 1 (Top) -->
-                    <div class="swipe-card" style="z-index: 3; transform: translateY(0) scale(1);">
-                        <div class="card-inner">
-                            <div class="card-photo">
-                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop&auto=format" alt="Sarah">
-                                
-                                <!-- Photo indicators -->
-                                <div class="photo-indicators">
-                                    <div class="indicator active"></div>
-                                    <div class="indicator"></div>
-                                    <div class="indicator"></div>
-                                </div>
-                                
-                                <!-- Photo navigation -->
-                                <div class="photo-nav">
-                                    <button class="nav-prev"></button>
-                                    <button class="nav-next"></button>
-                                </div>
-                                
-                                <!-- Gradient overlay -->
-                                <div class="gradient-overlay"></div>
-                                
-                                <!-- Swipe indicators (hidden by default) -->
-                                <div class="like-indicator" style="opacity: 0;">
-                                    <span>LIKE</span>
-                                </div>
-                                <div class="nope-indicator" style="opacity: 0;">
-                                    <span>NOPE</span>
-                                </div>
-                                
-                                <!-- User info -->
-                                <div class="user-info">
-                                    <div class="user-info-main">
-                                        <div class="user-details">
-                                            <div class="user-name">
-                                                <h2>Sarah, 24</h2>
-                                                <svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                                </svg>
-                                            </div>
-                                            
-                                            <div class="user-location">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                                    <circle cx="12" cy="10" r="3"/>
-                                                </svg>
-                                                <span>2 km away</span>
-                                                <span class="online-badge">Online</span>
-                                            </div>
-                                            
-                                            <p class="user-bio">Adventure seeker, coffee lover, and dog mom. Let's explore the city together!</p>
-                                            
-                                            <div class="user-interests">
-                                                <span class="interest-tag">Travel</span>
-                                                <span class="interest-tag">Coffee</span>
-                                                <span class="interest-tag">Hiking</span>
-                                                <span class="interest-tag">Photography</span>
-                                            </div>
+        <div class="card-stack">
+            <div class="card-container">
+                <div class="swipe-card" style="z-index: 3;">
+                    <div class="card-inner">
+                        <div class="card-photo">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop" alt="Sarah">
+                            
+                            <div class="photo-indicators">
+                                <div class="indicator active"></div>
+                                <div class="indicator"></div>
+                                <div class="indicator"></div>
+                            </div>
+                            
+                            <div class="photo-nav">
+                                <button class="nav-prev"></button>
+                                <button class="nav-next"></button>
+                            </div>
+                            
+                            <div class="gradient-overlay"></div>
+                            
+                            <div class="like-indicator">
+                                <span>LIKE</span>
+                            </div>
+                            <div class="nope-indicator">
+                                <span>NOPE</span>
+                            </div>
+                            
+                            <div class="user-info">
+                                <div class="user-info-main">
+                                    <div class="user-details">
+                                        <div class="user-name">
+                                            <h2>Sarah, 24</h2>
+                                            <svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
                                         </div>
                                         
-                                        <button class="info-button">
+                                        <div class="user-location">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <line x1="12" y1="16" x2="12" y2="12"/>
-                                                <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                                <circle cx="12" cy="10" r="3"/>
                                             </svg>
-                                        </button>
+                                            <span>2 km away</span>
+                                            <span class="online-badge">Online</span>
+                                        </div>
+                                        
+                                        <p class="user-bio">Adventure seeker, coffee lover, and dog mom. Let's explore the city together!</p>
+                                        
+                                        <div class="user-interests">
+                                            <span class="interest-tag">Travel</span>
+                                            <span class="interest-tag">Coffee</span>
+                                            <span class="interest-tag">Hiking</span>
+                                            <span class="interest-tag">Photography</span>
+                                        </div>
                                     </div>
+                                    
+                                    <button class="info-button">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="12" y1="16" x2="12" y2="12"/>
+                                            <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Card 2 (Middle) -->
-                    <div class="swipe-card" style="z-index: 2; transform: translateY(10px) scale(0.95);">
-                        <div class="card-inner">
-                            <div class="card-photo">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format" alt="Emma">
-                                <div class="gradient-overlay"></div>
-                            </div>
+                <div class="swipe-card" style="z-index: 2; transform: translateY(10px) scale(0.95);">
+                    <div class="card-inner">
+                        <div class="card-photo">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop" alt="Emma">
+                            <div class="gradient-overlay"></div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Card 3 (Bottom) -->
-                    <div class="swipe-card" style="z-index: 1; transform: translateY(20px) scale(0.9);">
-                        <div class="card-inner">
-                            <div class="card-photo">
-                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop&auto=format" alt="Lisa">
-                                <div class="gradient-overlay"></div>
-                            </div>
+                <div class="swipe-card" style="z-index: 1; transform: translateY(20px) scale(0.9);">
+                    <div class="card-inner">
+                        <div class="card-photo">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop" alt="Lisa">
+                            <div class="gradient-overlay"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button class="action-btn small undo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 12h13a5 5 0 0 1 0 10H7"/>
-                        <path d="M3 12l4-4M3 12l4 4"/>
-                    </svg>
-                </button>
-                
-                <button class="action-btn large dislike">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-                
-                <button class="action-btn medium superlike">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                </button>
-                
-                <button class="action-btn large like">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                </button>
-                
-                <button class="action-btn small boost">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                </button>
-            </div>
         </div>
-    </main>
 
-    <!-- Filter Sheet -->
+        <div class="action-buttons">
+            <button class="action-btn small undo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h13a5 5 0 0 1 0 10H7"/>
+                    <path d="M3 12l4-4M3 12l4 4"/>
+                </svg>
+            </button>
+            
+            <button class="action-btn large dislike">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            
+            <button class="action-btn medium superlike">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+            </button>
+            
+            <button class="action-btn large like">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </button>
+            
+            <button class="action-btn small boost">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeFilter()"></div>
     <div class="sheet" id="filterSheet">
         <div class="sheet-header">
@@ -1129,10 +970,10 @@
             <div class="filter-section">
                 <label class="filter-label">Show me</label>
                 <select class="select">
-                    <option value="all">Everyone</option>
-                    <option value="female">Women</option>
-                    <option value="male">Men</option>
-                    <option value="non-binary">Non-binary</option>
+                    <option>Everyone</option>
+                    <option>Women</option>
+                    <option>Men</option>
+                    <option>Non-binary</option>
                 </select>
             </div>
             
@@ -1141,16 +982,6 @@
     </div>
 
     <script>
-        // Simple theme toggle for design preview
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-            const sunIcon = document.querySelector('.sun-icon');
-            const moonIcon = document.querySelector('.moon-icon');
-            sunIcon.classList.toggle('hidden');
-            moonIcon.classList.toggle('hidden');
-        }
-
-        // Filter sheet toggle
         function toggleFilter() {
             document.getElementById('filterSheet').classList.add('active');
             document.getElementById('sheetOverlay').classList.add('active');
