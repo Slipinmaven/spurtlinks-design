@@ -8,8 +8,741 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <title>Discover - SpurtLinks</title>
-    <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="discover.css" />
+    <style>
+      :root {
+        --card-width: 340px;
+      }
+      :root {
+        --background: 0, 0%, 100%;
+        --background-gradient: 0, 0%, 100%;
+        --foreground: 240, 10%, 4%;
+        --card: 0, 0%, 100%;
+        --card-foreground: 240, 10%, 4%;
+        --popover: 0, 0%, 100%;
+        --popover-foreground: 240, 10%, 4%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 5%, 96%;
+        --secondary-foreground: 240, 6%, 10%;
+        --muted: 240, 5%, 96%;
+        --muted-foreground: 240, 4%, 46%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 84%, 60%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 6%, 90%;
+        --input: 240, 6%, 90%;
+        --ring: 350, 89%, 60%;
+        --radius: 0.75rem;
+        --rose: 350, 89%, 60%;
+        --lime: 83, 78%, 68%;
+        --green: rgb(38, 247, 38);
+        --rose-500: #ec4899;
+        --orange-400: #fb923c;
+      }
+
+      .dark {
+        --background: 240, 6%, 4%;
+        --background-gradient: linear-gradient(
+          to bottom,
+          hsla(350, 89%, 60%, 0.05) 0%,
+          transparent 50%,
+          transparent 100%
+        );
+        --foreground: 0, 0%, 98%;
+        --card: 240, 6%, 10%;
+        --card-foreground: 0, 0%, 98%;
+        --popover: 240, 6%, 10%;
+        --popover-foreground: 0, 0%, 98%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 4%, 16%;
+        --secondary-foreground: 0, 0%, 98%;
+        --muted: 240, 4%, 16%;
+        --muted-foreground: 240, 5%, 65%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 63%, 31%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 4%, 16%;
+        --input: 240, 4%, 16%;
+        --ring: 350, 89%, 60%;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: 0.3s ease;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+        width: 100%;
+      }
+
+      /* Sidebar - visible by default */
+      .spurtlinks-sidebar {
+        width: 280px;
+        height: 100vh;
+        background: hsl(var(--card));
+        border-right: 1px solid hsla(var(--border), 0.5);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+        z-index: 100;
+        flex-shrink: 0;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar collapsed - completely hidden */
+      .spurtlinks-sidebar.collapsed {
+        transform: translateX(-100%);
+        opacity: 0;
+        position: fixed;
+        z-index: 99;
+      }
+      .spurtlinks-sidebar + .content {
+        margin-left: 280px;
+        transition: 0.3s ease;
+      }
+      .spurtlinks-sidebar.collapsed + .content {
+        margin-left: 0;
+        transition: 0.3s ease;
+      }
+
+      /* Main content - takes full width when sidebar is collapsed */
+      .content {
+        flex: 1;
+        transition: all 0.4s ease;
+        min-width: 0;
+        margin-left: 0;
+        width: 100%;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        border-bottom: 1px solid hsla(var(--border), 0.5);
+        height: 80px;
+        padding: 0 20px;
+      }
+      header h1 {
+        justify-self: center;
+      }
+      .main-content {
+        background: var(--background-gradient);
+        height: 100vh;
+        padding: 20px;
+      }
+      .profile i {
+        color: var(--rose-500);
+        cursor: pointer;
+      }
+      /* Mobile menu button - hidden by default */
+      .mobile-menu-btn {
+        display: none;
+        padding: 10px;
+        border-radius: 12px;
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--foreground));
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Show menu button when sidebar is collapsed */
+      .spurtlinks-sidebar.collapsed ~ .content .mobile-menu-btn {
+        display: flex;
+      }
+
+      /* Hide menu button when sidebar is visible */
+      .mobile-menu-btn.hidden {
+        display: none;
+      }
+
+      .sidebar-header {
+        height: 80px;
+        padding: 0 20px;
+        border-bottom: 1px solid hsla(var(--border), 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .logo {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--rose-500);
+        text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.208);
+        text-decoration: none;
+        padding: 20px;
+        gap: 10px;
+        font-size: 25px;
+        font-weight: bold;
+      }
+      .logo img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .sidebar-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--muted-foreground));
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .sidebar-close-btn:hover {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+      }
+
+      .sidebar-nav {
+        flex: 1;
+        padding: 24px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+      }
+
+      .nav-item:hover {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: hsl(var(--primary));
+      }
+
+      .nav-item.active {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: hsl(var(--primary));
+      }
+
+      .nav-item.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 4px;
+        height: 24px;
+        border-radius: 0 4px 4px 0;
+        background: hsl(var(--primary));
+      }
+
+      .nav-item i {
+        width: 20px;
+        font-size: 18px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .nav-label {
+        font-size: 15px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .sidebar-footer {
+        padding: 20px;
+        border-top: 1px solid hsla(var(--border), 0.5);
+        flex-shrink: 0;
+      }
+
+      .theme-toggle {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        background: transparent;
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--muted-foreground));
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+        font-size: 14px;
+      }
+
+      .theme-toggle:hover {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+      }
+
+      .mobile-bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: hsl(var(--card));
+        border-top: 1px solid hsla(var(--border), 0.5);
+        z-index: 10000;
+        padding: 0 16px;
+        backdrop-filter: blur(10px);
+      }
+
+      .mobile-nav-items {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        height: 100%;
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+        font-size: 12px;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+
+      .mobile-nav-item i {
+        font-size: 20px;
+      }
+
+      .mobile-nav-item.active {
+        color: hsl(var(--primary));
+      }
+
+      .mobile-nav-item.active i {
+        color: hsl(var(--primary));
+      }
+
+      .mobile-nav-item span {
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+      }
+
+      /* Mobile styles */
+      @media (max-width: 1024px) {
+        .app {
+          flex-direction: column;
+        }
+        .spurtlinks-sidebar {
+          display: none;
+        }
+
+        .mobile-bottom-nav {
+          display: block;
+        }
+
+        .content {
+          padding: 20px;
+          padding-bottom: 90px;
+          width: 100%;
+        }
+        .main-content {
+          flex: 1;
+          width: 100%;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+        }
+
+        .spurtlinks-sidebar.collapsed ~ .content .mobile-menu-btn {
+          display: flex;
+        }
+      }
+
+      h1 .fa-heart {
+        background: linear-gradient(
+          to bottom right,
+          var(--rose-500),
+          var(--orange-400)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent; /* Fallback */
+      }
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .profiles-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 24px;
+        margin-top: 30px;
+      }
+
+      .profile-card {
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 24px;
+        max-width: 600px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px -8px rgba(236, 72, 153, 0.2);
+        border-color: hsla(350, 89%, 60%, 0.3);
+      }
+
+      .card-image {
+        position: relative;
+        height: 300px;
+        overflow: hidden;
+      }
+
+      .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .profile-card:hover .card-image img {
+        transform: scale(1.05);
+      }
+
+      .photo-indicators {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        gap: 6px;
+        z-index: 5;
+      }
+
+      .photo-indicators .indicator {
+        height: 4px;
+        flex: 1;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.4);
+      }
+
+      .photo-indicators .indicator.active {
+        background: white;
+      }
+      .online-badge {
+        position: absolute;
+        top: 20px;
+        right: 16px;
+        background: rgba(190, 242, 100, 0.15);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: rgb(5, 241, 5);
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 5;
+        border: 1px solid rgba(109, 242, 100, 0.3);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .online-badge i {
+        font-size: 8px;
+        color: rgb(5, 241, 5);
+        filter: drop-shadow(0 0 4px rgb(5, 241, 5));
+      }
+
+      .verified-badge {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 5;
+      }
+
+      .verified-badge i {
+        font-size: 10px;
+      }
+
+      .card-content {
+        padding: 20px;
+      }
+
+      .user-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .user-name-age h3 {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: "Outfit", sans-serif;
+        margin: 0;
+        color: hsl(var(--foreground));
+      }
+
+      .user-name-age p {
+        font-size: 14px;
+        color: hsl(var(--muted-foreground));
+        margin: 4px 0 0;
+      }
+
+      .user-distance {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: hsl(var(--muted-foreground));
+        font-size: 13px;
+      }
+
+      .user-distance i {
+        font-size: 12px;
+      }
+
+      .user-bio {
+        font-size: 14px;
+        line-height: 1.5;
+        color: hsl(var(--foreground));
+        margin: 12px 0 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .user-interests {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .interest-tag {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: hsl(var(--primary));
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid hsla(350, 89%, 60%, 0.2);
+      }
+
+      .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-top: 1px solid hsla(var(--border), 0.5);
+        padding-top: 16px;
+      }
+
+      .action-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 30px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .action-btn.like {
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        color: white;
+      }
+
+      .action-btn.like:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px var(--rose-500);
+      }
+
+      .action-btn.gift {
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+      }
+
+      .action-btn.gift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px #f59e0b;
+      }
+
+      .action-btn.message {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+      }
+
+      .action-btn.message:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px #3b82f6;
+      }
+
+      .action-btn.more {
+        background: transparent;
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--muted-foreground));
+        flex: 0.5;
+      }
+
+      .action-btn.more:hover {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 50px;
+        padding: 12px 24px;
+        color: hsl(var(--foreground));
+        font-weight: 500;
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .toast.show {
+        display: flex;
+        animation: slideUp 0.3s ease;
+      }
+
+      .toast.success {
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        color: white;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translate(-50%, 20px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .app {
+          width: 100%;
+        }
+        .content {
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+        }
+        header {
+          width: 100%;
+          padding: 10px;
+          font-size: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+        }
+        .main-content {
+          padding: 0;
+        }
+        .profiles-grid {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .profile-card {
+          margin: 10px;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    </style>
   </head>
   <body class="dark">
     <div class="app">
@@ -362,7 +1095,340 @@
       </nav>
     </div>
 
-    <script src="sidebar.js"></script>
-    <script src="discover.js"></script>
+    <script>
+      // sidebar.js
+      const SpurtLinksSidebar = {
+        navItems: [
+          { icon: "fas fa-compass", label: "Discover", path: "/discover.html" },
+          { icon: "fas fa-heart", label: "Matches", path: "/matches.html" },
+          { icon: "fas fa-comment", label: "Chat", path: "/chat-list.html" },
+          { icon: "fas fa-wallet", label: "Wallet", path: "/wallet.html" },
+          { icon: "fas fa-user", label: "Profile", path: "/profile.html" },
+          { icon: "fas fa-cog", label: "Settings", path: "/settings.html" },
+        ],
+
+        init: function () {
+          this.sidebar = document.getElementById("spurtlinksSidebar");
+          this.sidebarNav = document.getElementById("sidebarNav");
+          this.mobileBtn = document.getElementById("mobileMenuBtn");
+          this.closeBtn = document.getElementById("sidebarCloseBtn");
+          this.themeToggle = document.getElementById("themeToggle");
+          this.sunIcon = this.themeToggle?.querySelector(".fa-sun");
+          this.moonIcon = this.themeToggle?.querySelector(".fa-moon");
+          this.themeLabel = this.themeToggle?.querySelector(".nav-label");
+          this.isCollapsed = false;
+          this.isMobile = window.innerWidth < 1024;
+
+          if (!this.sidebar) return;
+
+          this.renderNav();
+          this.loadTheme();
+          this.bindEvents();
+          this.checkScreenSize();
+        },
+
+        renderNav: function () {
+          const currentPage = this.getCurrentPage();
+          this.sidebarNav.innerHTML = this.navItems
+            .map((item) => {
+              const isActive = currentPage === item.path;
+              return `
+                <a href="${item.path}" class="nav-item ${isActive ? "active" : ""}">
+                    <i class="${item.icon}"></i>
+                    <span class="nav-label">${item.label}</span>
+                </a>
+            `;
+            })
+            .join("");
+        },
+
+        getCurrentPage: function () {
+          const path =
+            window.location.pathname.split("/").pop() || "discover.html";
+          for (const item of this.navItems) {
+            if (item.path.includes(path)) {
+              return item.path;
+            }
+          }
+          return "/discover.html";
+        },
+
+        closeSidebar: function () {
+          this.sidebar.classList.add("collapsed");
+          this.isCollapsed = true;
+          this.showHamburgerMenu();
+        },
+
+        openSidebar: function () {
+          this.sidebar.classList.remove("collapsed");
+          this.isCollapsed = false;
+          this.hideHamburgerMenu();
+        },
+
+        toggleSidebar: function () {
+          if (this.sidebar.classList.contains("collapsed")) {
+            this.openSidebar();
+          } else {
+            this.closeSidebar();
+          }
+        },
+
+        showHamburgerMenu: function () {
+          if (this.mobileBtn) {
+            this.mobileBtn.style.display = "flex";
+          }
+        },
+
+        hideHamburgerMenu: function () {
+          if (this.mobileBtn) {
+            this.mobileBtn.style.display = "none";
+          }
+        },
+
+        openMobileSidebar: function () {
+          this.sidebar.classList.add("mobile-open");
+          document.body.style.overflow = "hidden";
+        },
+
+        closeMobileSidebar: function () {
+          this.sidebar.classList.remove("mobile-open");
+          document.body.style.overflow = "";
+        },
+
+        toggleTheme: function () {
+          document.body.classList.toggle("dark");
+          const isDark = document.body.classList.contains("dark");
+
+          if (isDark) {
+            this.sunIcon.style.display = "none";
+            this.moonIcon.style.display = "inline-block";
+            this.themeLabel.textContent = "Light mode";
+          } else {
+            this.sunIcon.style.display = "inline-block";
+            this.moonIcon.style.display = "none";
+            this.themeLabel.textContent = "Dark mode";
+          }
+
+          localStorage.setItem("spurtlinks-theme", isDark ? "dark" : "light");
+        },
+
+        loadTheme: function () {
+          const savedTheme = localStorage.getItem("spurtlinks-theme");
+          if (savedTheme === "dark") {
+            document.body.classList.add("dark");
+            this.sunIcon.style.display = "none";
+            this.moonIcon.style.display = "inline-block";
+            this.themeLabel.textContent = "Light mode";
+          }
+        },
+
+        checkScreenSize: function () {
+          const wasMobile = this.isMobile;
+          this.isMobile = window.innerWidth < 1024;
+
+          if (this.isMobile) {
+            this.closeMobileSidebar();
+            this.sidebar.classList.add("collapsed");
+            this.isCollapsed = true;
+            this.hideHamburgerMenu();
+          } else {
+            this.sidebar.classList.remove("collapsed");
+            this.isCollapsed = false;
+            this.hideHamburgerMenu();
+            this.closeMobileSidebar();
+          }
+
+          if (wasMobile !== this.isMobile) {
+            this.renderNav();
+          }
+        },
+
+        bindEvents: function () {
+          this.mobileBtn?.addEventListener("click", () => this.openSidebar());
+
+          this.closeBtn?.addEventListener("click", () => {
+            if (this.isMobile) {
+              this.closeMobileSidebar();
+            } else {
+              this.closeSidebar();
+            }
+          });
+
+          this.themeToggle?.addEventListener("click", () => this.toggleTheme());
+
+          let resizeTimeout;
+          window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => this.checkScreenSize(), 100);
+          });
+
+          document.addEventListener("click", (e) => {
+            if (this.isMobile) {
+              if (
+                this.sidebar.classList.contains("mobile-open") &&
+                !this.sidebar.contains(e.target) &&
+                !this.mobileBtn?.contains(e.target)
+              ) {
+                this.closeMobileSidebar();
+              }
+            }
+          });
+        },
+      };
+
+      document.addEventListener("DOMContentLoaded", () =>
+        SpurtLinksSidebar.init(),
+      );
+
+      // Add this to your discover page script
+      const users = [
+        {
+          id: 1,
+          name: "Sarah",
+          age: 24,
+          photo:
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          photos: [
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          ],
+          location: "2 km away",
+          online: true,
+          verified: true,
+          bio: "Adventure seeker, coffee lover, and dog mom. Let's explore the city together! I love hiking and trying new restaurants.",
+          interests: ["Travel", "Coffee", "Hiking", "Photography"],
+        },
+        {
+          id: 2,
+          name: "Emma",
+          age: 26,
+          photo:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          photos: [
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          ],
+          location: "5 km away",
+          online: false,
+          verified: false,
+          bio: "Art enthusiast, yoga instructor, and foodie. Looking for meaningful conversations and creative connections.",
+          interests: ["Art", "Yoga", "Food", "Music"],
+        },
+      ];
+
+      let currentUsers = [...users];
+      let swipedUsers = [];
+      let currentPhotoIndex = {};
+
+      function showToast(message, isSuccess = false) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        if (isSuccess) toast.classList.add("success");
+
+        setTimeout(() => {
+          toast.classList.remove("show", "success");
+        }, 2000);
+      }
+
+      function handleAction(action, userId) {
+        const user =
+          currentUsers.find((u) => u.id == userId) || currentUsers[0];
+        if (!user) return;
+
+        let message = "";
+        switch (action) {
+          case "like":
+            message = `You liked ${user.name}!`;
+            if (Math.random() > 0.5) {
+              setTimeout(
+                () => showToast(`It's a match with ${user.name}! 🎉`, true),
+                500,
+              );
+            }
+            break;
+          case "dislike":
+            message = `You passed on ${user.name}`;
+            break;
+          case "superlike":
+            message = `Super liked ${user.name}! ✨`;
+            break;
+          case "gift":
+            message = `Send a gift to ${user.name} 🎁`;
+            break;
+          case "message":
+            message = `Start chatting with ${user.name} 💬`;
+            break;
+          case "more":
+            message = `More options for ${user.name}`;
+            break;
+        }
+
+        showToast(message);
+
+        // Remove card if it's like/dislike
+        if (["like", "dislike", "superlike"].includes(action)) {
+          const card = document.getElementById(`card-${user.id}`);
+          if (card) {
+            card.classList.add(
+              action === "dislike" ? "swipe-left" : "swipe-right",
+            );
+            setTimeout(() => {
+              const index = currentUsers.findIndex((u) => u.id == user.id);
+              if (index !== -1) {
+                currentUsers.splice(index, 1);
+                swipedUsers.push(user);
+                // Here you would reload cards or show next
+              }
+            }, 300);
+          }
+        }
+      }
+
+      function changePhoto(userId, direction) {
+        const user = currentUsers.find((u) => u.id == userId);
+        if (!user || !user.photos) return;
+
+        currentPhotoIndex[userId] =
+          (currentPhotoIndex[userId] || 0) + direction;
+        if (currentPhotoIndex[userId] < 0)
+          currentPhotoIndex[userId] = user.photos.length - 1;
+        if (currentPhotoIndex[userId] >= user.photos.length)
+          currentPhotoIndex[userId] = 0;
+
+        const img = document.querySelector(`#card-${userId} img`);
+        if (img) img.src = user.photos[currentPhotoIndex[userId]];
+      }
+
+      // Event listeners
+      document.getElementById("likeBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0) handleAction("like", currentUsers[0].id);
+      });
+
+      document.getElementById("dislikeBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0)
+          handleAction("dislike", currentUsers[0].id);
+      });
+
+      document.getElementById("superlikeBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0)
+          handleAction("superlike", currentUsers[0].id);
+      });
+
+      document.getElementById("giftBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0) handleAction("gift", currentUsers[0].id);
+      });
+
+      document.getElementById("messageBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0)
+          handleAction("message", currentUsers[0].id);
+      });
+
+      document.getElementById("moreBtn")?.addEventListener("click", () => {
+        if (currentUsers.length > 0) handleAction("more", currentUsers[0].id);
+      });
+    </script>
   </body>
 </html>

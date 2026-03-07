@@ -8,8 +8,891 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <title>Profile - SpurtLinks</title>
-    <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="profile.css" />
+
+    <style>
+      :root {
+        --background: 0, 0%, 100%;
+        --background-gradient: 0, 0%, 100%;
+        --foreground: 240, 10%, 4%;
+        --card: 0, 0%, 100%;
+        --card-foreground: 240, 10%, 4%;
+        --popover: 0, 0%, 100%;
+        --popover-foreground: 240, 10%, 4%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 5%, 96%;
+        --secondary-foreground: 240, 6%, 10%;
+        --muted: 240, 5%, 96%;
+        --muted-foreground: 240, 4%, 46%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 84%, 60%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 6%, 90%;
+        --input: 240, 6%, 90%;
+        --ring: 350, 89%, 60%;
+        --radius: 0.75rem;
+        --rose: 350, 89%, 60%;
+        --lime: 83, 78%, 68%;
+        --green: rgb(38, 247, 38);
+        --rose-500: #ec4899;
+        --orange-400: #fb923c;
+      }
+
+      .dark {
+        --background: 240, 6%, 4%;
+        --background-gradient: linear-gradient(
+          to bottom,
+          hsla(350, 89%, 60%, 0.05) 0%,
+          transparent 50%,
+          transparent 100%
+        );
+        --foreground: 0, 0%, 98%;
+        --card: 240, 6%, 10%;
+        --card-foreground: 0, 0%, 98%;
+        --popover: 240, 6%, 10%;
+        --popover-foreground: 0, 0%, 98%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 4%, 16%;
+        --secondary-foreground: 0, 0%, 98%;
+        --muted: 240, 4%, 16%;
+        --muted-foreground: 240, 5%, 65%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 63%, 31%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 4%, 16%;
+        --input: 240, 4%, 16%;
+        --ring: 350, 89%, 60%;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: 0.3s ease;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+        width: 100%;
+      }
+
+      /* Sidebar - visible by default */
+      .spurtlinks-sidebar {
+        width: 280px;
+        height: 100vh;
+        background: hsl(var(--card));
+        border-right: 1px solid hsla(var(--border), 0.5);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+        z-index: 100;
+        flex-shrink: 0;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar collapsed - completely hidden */
+      .spurtlinks-sidebar.collapsed {
+        transform: translateX(-100%);
+        opacity: 0;
+        position: fixed;
+        z-index: 99;
+      }
+      .spurtlinks-sidebar + .content {
+        margin-left: 280px;
+        transition: 0.3s ease;
+      }
+      .spurtlinks-sidebar.collapsed + .content {
+        margin-left: 0;
+        transition: 0.3s ease;
+      }
+
+      /* Main content - takes full width when sidebar is collapsed */
+      .content {
+        flex: 1;
+        transition: all 0.4s ease;
+        min-width: 0;
+        margin-left: 0;
+        width: 100%;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        border-bottom: 1px solid hsla(var(--border), 0.5);
+        height: 80px;
+        padding: 0 20px;
+      }
+      header h1 {
+        justify-self: center;
+      }
+      .main-content {
+        background: var(--background-gradient);
+        height: 100vh;
+        padding: 20px;
+      }
+      .profile i {
+        color: var(--rose-500);
+        cursor: pointer;
+      }
+      /* Mobile menu button - hidden by default */
+      .mobile-menu-btn {
+        display: none;
+        padding: 10px;
+        border-radius: 12px;
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--foreground));
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Show menu button when sidebar is collapsed */
+      .spurtlinks-sidebar.collapsed ~ .content .mobile-menu-btn {
+        display: flex;
+      }
+
+      /* Hide menu button when sidebar is visible */
+      .mobile-menu-btn.hidden {
+        display: none;
+      }
+
+      .sidebar-header {
+        height: 80px;
+        padding: 0 20px;
+        border-bottom: 1px solid hsla(var(--border), 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .logo {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--rose-500);
+        text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.208);
+        text-decoration: none;
+        padding: 20px;
+        gap: 10px;
+        font-size: 25px;
+        font-weight: bold;
+      }
+      .logo img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .sidebar-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--muted-foreground));
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .sidebar-close-btn:hover {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+      }
+
+      .sidebar-nav {
+        flex: 1;
+        padding: 24px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+      }
+
+      .nav-item:hover {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: hsl(var(--primary));
+      }
+
+      .nav-item.active {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: hsl(var(--primary));
+      }
+
+      .nav-item.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 4px;
+        height: 24px;
+        border-radius: 0 4px 4px 0;
+        background: hsl(var(--primary));
+      }
+
+      .nav-item i {
+        width: 20px;
+        font-size: 18px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .nav-label {
+        font-size: 15px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .sidebar-footer {
+        padding: 20px;
+        border-top: 1px solid hsla(var(--border), 0.5);
+        flex-shrink: 0;
+      }
+
+      .theme-toggle {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        background: transparent;
+        border: 1px solid hsla(var(--border), 0.5);
+        color: hsl(var(--muted-foreground));
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+        font-size: 14px;
+      }
+
+      .theme-toggle:hover {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+      }
+
+      .mobile-bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: hsl(var(--card));
+        border-top: 1px solid hsla(var(--border), 0.5);
+        z-index: 10000;
+        padding: 0 16px;
+        backdrop-filter: blur(10px);
+      }
+
+      .mobile-nav-items {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        height: 100%;
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+        font-size: 12px;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+
+      .mobile-nav-item i {
+        font-size: 20px;
+      }
+
+      .mobile-nav-item.active {
+        color: hsl(var(--primary));
+      }
+
+      .mobile-nav-item.active i {
+        color: hsl(var(--primary));
+      }
+
+      .mobile-nav-item span {
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+      }
+
+      /* Mobile styles */
+      @media (max-width: 1024px) {
+        .app {
+          flex-direction: column;
+        }
+        .spurtlinks-sidebar {
+          display: none;
+        }
+
+        .mobile-bottom-nav {
+          display: block;
+        }
+
+        .content {
+          padding: 20px;
+          padding-bottom: 90px;
+          width: 100%;
+        }
+        .main-content {
+          flex: 1;
+          width: 100%;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+        }
+
+        .spurtlinks-sidebar.collapsed ~ .content .mobile-menu-btn {
+          display: flex;
+        }
+      }
+      /* profile.css */
+      .main-content {
+        padding: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .profile-header h2 {
+        font-family: "Outfit", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: hsl(var(--foreground));
+      }
+
+      .edit-profile-btn {
+        padding: 10px 20px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        color: white;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px var(--rose-500);
+      }
+
+      /* Profile Media Section */
+      .profile-media {
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 24px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        position: relative;
+      }
+
+      .media-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+      }
+
+      .media-container img,
+      .media-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .media-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 24px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        color: white;
+      }
+
+      .spurtnumber-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(236, 72, 153, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(236, 72, 153, 0.3);
+        border-radius: 30px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 12px;
+      }
+
+      .spurtnumber-badge i {
+        color: var(--rose-500);
+      }
+
+      .copy-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        padding: 4px 12px;
+        font-size: 12px;
+        color: white;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: all 0.2s;
+      }
+
+      .copy-btn:hover {
+        background: var(--rose-500);
+        border-color: var(--rose-500);
+      }
+      .copy-notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: hsl(var(--popover));
+        color: var(--green);
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 2000;
+        display: none;
+      }
+
+      .copy-notification.show {
+        display: block;
+        animation: fadeInOut 2s ease;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+        15% {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+        85% {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+      }
+
+      .username-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .username-section h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+      }
+
+      /* Badge Styles - What others see */
+      .intention-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .intention-badge i {
+        font-size: 12px;
+      }
+
+      .intention-badge.dating i {
+        color: var(--rose-500);
+      }
+
+      .intention-badge.hookups i {
+        color: #f59e0b;
+      }
+
+      .intention-badge.social i {
+        color: #8b5cf6;
+      }
+
+      .verified-badge-small {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3b82f6;
+        color: white;
+        font-size: 10px;
+        margin-left: 4px;
+      }
+
+      .profile-stats {
+        display: flex;
+        gap: 24px;
+        margin-top: 12px;
+      }
+
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* Profile Info Grid */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .info-card {
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .info-card h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .info-card h3 i {
+        color: var(--rose-500);
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid hsla(var(--border), 0.3);
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        color: hsl(var(--muted-foreground));
+        font-size: 14px;
+      }
+
+      .info-value {
+        color: hsl(var(--foreground));
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .info-select {
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 8px;
+        padding: 6px 12px;
+        color: hsl(var(--foreground));
+        font-size: 14px;
+        width: 180px;
+      }
+
+      .info-input {
+        background: hsl(var(--card));
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 8px;
+        padding: 6px 12px;
+        color: hsl(var(--foreground));
+        font-size: 14px;
+        width: 180px;
+      }
+
+      /* Account Details (Private) */
+      .account-card {
+        background: linear-gradient(
+          135deg,
+          hsla(350, 89%, 60%, 0.1),
+          hsla(240, 6%, 10%, 0.9)
+        );
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .account-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .account-header i {
+        color: var(--rose-500);
+      }
+
+      .account-header h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+      }
+
+      .account-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .account-item {
+        background: hsla(var(--muted), 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .account-label {
+        color: hsl(var(--muted-foreground));
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+
+      .account-value {
+        color: hsl(var(--foreground));
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-badge.active {
+        background: rgba(190, 242, 100, 0.2);
+        color: var(--lime-400);
+      }
+
+      /* Personality Test Section */
+      .personality-card {
+        background: linear-gradient(
+          135deg,
+          hsla(83, 78%, 68%, 0.1),
+          hsla(240, 6%, 10%, 0.9)
+        );
+        border: 1px solid hsla(var(--border), 0.5);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .personality-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .personality-header h3 {
+        font-family: "Outfit", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .take-test-btn {
+        padding: 8px 16px;
+        border-radius: 30px;
+        background: transparent;
+        border: 1px solid var(--lime-400);
+        color: var(--lime-400);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .take-test-btn:hover {
+        background: var(--lime-400);
+        color: black;
+      }
+
+      .personality-result {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 16px;
+        background: hsla(var(--muted), 0.3);
+        border-radius: 16px;
+      }
+
+      .personality-score {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--lime-400), var(--rose-500));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+      }
+
+      .personality-desc p {
+        color: hsl(var(--foreground));
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* Edit mode styles */
+      .edit-mode .info-value {
+        display: none;
+      }
+
+      .edit-mode .info-select,
+      .edit-mode .info-input {
+        display: block;
+      }
+
+      .edit-highlight {
+        outline: 2px solid var(--rose-500);
+        border-radius: 8px;
+        padding: 4px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .profile-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .account-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .media-container {
+          height: 300px;
+        }
+
+        .username-section h1 {
+          font-size: 24px;
+        }
+
+        .profile-stats {
+          flex-wrap: wrap;
+        }
+
+        .personality-result {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    </style>
   </head>
   <body class="dark">
     <div class="app">
@@ -279,9 +1162,191 @@
     <div class="copy-notification" id="copyNotification">
       <i class="fas fa-check-circle"></i> SpurtNumber copied to clipboard!
     </div>
-
-    <script src="sidebar.js"></script>
     <script>
+      // sidebar.js
+      const SpurtLinksSidebar = {
+        navItems: [
+          { icon: "fas fa-compass", label: "Discover", path: "/discover.html" },
+          { icon: "fas fa-heart", label: "Matches", path: "/matches.html" },
+          { icon: "fas fa-comment", label: "Chat", path: "/chat-list.html" },
+          { icon: "fas fa-wallet", label: "Wallet", path: "/wallet.html" },
+          { icon: "fas fa-user", label: "Profile", path: "/profile.html" },
+          { icon: "fas fa-cog", label: "Settings", path: "/settings.html" },
+        ],
+
+        init: function () {
+          this.sidebar = document.getElementById("spurtlinksSidebar");
+          this.sidebarNav = document.getElementById("sidebarNav");
+          this.mobileBtn = document.getElementById("mobileMenuBtn");
+          this.closeBtn = document.getElementById("sidebarCloseBtn");
+          this.themeToggle = document.getElementById("themeToggle");
+          this.sunIcon = this.themeToggle?.querySelector(".fa-sun");
+          this.moonIcon = this.themeToggle?.querySelector(".fa-moon");
+          this.themeLabel = this.themeToggle?.querySelector(".nav-label");
+          this.isCollapsed = false;
+          this.isMobile = window.innerWidth < 1024;
+
+          if (!this.sidebar) return;
+
+          this.renderNav();
+          this.loadTheme();
+          this.bindEvents();
+          this.checkScreenSize();
+        },
+
+        renderNav: function () {
+          const currentPage = this.getCurrentPage();
+          this.sidebarNav.innerHTML = this.navItems
+            .map((item) => {
+              const isActive = currentPage === item.path;
+              return `
+                <a href="${item.path}" class="nav-item ${isActive ? "active" : ""}">
+                    <i class="${item.icon}"></i>
+                    <span class="nav-label">${item.label}</span>
+                </a>
+            `;
+            })
+            .join("");
+        },
+
+        getCurrentPage: function () {
+          const path =
+            window.location.pathname.split("/").pop() || "discover.html";
+          for (const item of this.navItems) {
+            if (item.path.includes(path)) {
+              return item.path;
+            }
+          }
+          return "/discover.html";
+        },
+
+        closeSidebar: function () {
+          this.sidebar.classList.add("collapsed");
+          this.isCollapsed = true;
+          this.showHamburgerMenu();
+        },
+
+        openSidebar: function () {
+          this.sidebar.classList.remove("collapsed");
+          this.isCollapsed = false;
+          this.hideHamburgerMenu();
+        },
+
+        toggleSidebar: function () {
+          if (this.sidebar.classList.contains("collapsed")) {
+            this.openSidebar();
+          } else {
+            this.closeSidebar();
+          }
+        },
+
+        showHamburgerMenu: function () {
+          if (this.mobileBtn) {
+            this.mobileBtn.style.display = "flex";
+          }
+        },
+
+        hideHamburgerMenu: function () {
+          if (this.mobileBtn) {
+            this.mobileBtn.style.display = "none";
+          }
+        },
+
+        openMobileSidebar: function () {
+          this.sidebar.classList.add("mobile-open");
+          document.body.style.overflow = "hidden";
+        },
+
+        closeMobileSidebar: function () {
+          this.sidebar.classList.remove("mobile-open");
+          document.body.style.overflow = "";
+        },
+
+        toggleTheme: function () {
+          document.body.classList.toggle("dark");
+          const isDark = document.body.classList.contains("dark");
+
+          if (isDark) {
+            this.sunIcon.style.display = "none";
+            this.moonIcon.style.display = "inline-block";
+            this.themeLabel.textContent = "Light mode";
+          } else {
+            this.sunIcon.style.display = "inline-block";
+            this.moonIcon.style.display = "none";
+            this.themeLabel.textContent = "Dark mode";
+          }
+
+          localStorage.setItem("spurtlinks-theme", isDark ? "dark" : "light");
+        },
+
+        loadTheme: function () {
+          const savedTheme = localStorage.getItem("spurtlinks-theme");
+          if (savedTheme === "dark") {
+            document.body.classList.add("dark");
+            this.sunIcon.style.display = "none";
+            this.moonIcon.style.display = "inline-block";
+            this.themeLabel.textContent = "Light mode";
+          }
+        },
+
+        checkScreenSize: function () {
+          const wasMobile = this.isMobile;
+          this.isMobile = window.innerWidth < 1024;
+
+          if (this.isMobile) {
+            this.closeMobileSidebar();
+            this.sidebar.classList.add("collapsed");
+            this.isCollapsed = true;
+            this.hideHamburgerMenu();
+          } else {
+            this.sidebar.classList.remove("collapsed");
+            this.isCollapsed = false;
+            this.hideHamburgerMenu();
+            this.closeMobileSidebar();
+          }
+
+          if (wasMobile !== this.isMobile) {
+            this.renderNav();
+          }
+        },
+
+        bindEvents: function () {
+          this.mobileBtn?.addEventListener("click", () => this.openSidebar());
+
+          this.closeBtn?.addEventListener("click", () => {
+            if (this.isMobile) {
+              this.closeMobileSidebar();
+            } else {
+              this.closeSidebar();
+            }
+          });
+
+          this.themeToggle?.addEventListener("click", () => this.toggleTheme());
+
+          let resizeTimeout;
+          window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => this.checkScreenSize(), 100);
+          });
+
+          document.addEventListener("click", (e) => {
+            if (this.isMobile) {
+              if (
+                this.sidebar.classList.contains("mobile-open") &&
+                !this.sidebar.contains(e.target) &&
+                !this.mobileBtn?.contains(e.target)
+              ) {
+                this.closeMobileSidebar();
+              }
+            }
+          });
+        },
+      };
+
+      document.addEventListener("DOMContentLoaded", () =>
+        SpurtLinksSidebar.init(),
+      );
+
       let isEditing = false;
       const editBtn = document.getElementById("editProfileBtn");
 
