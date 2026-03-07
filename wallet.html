@@ -1,1197 +1,579 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <title>Wallet - SpurtLinks</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            /* Dark theme only - forced dark mode */
-            --background: 240 6% 4%;
-            --foreground: 0 0% 98%;
-            --card: 240 6% 10%;
-            --card-foreground: 0 0% 98%;
-            --popover: 240 6% 10%;
-            --popover-foreground: 0 0% 98%;
-            --primary: 350 89% 60%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 240 4% 16%;
-            --secondary-foreground: 0 0% 98%;
-            --muted: 240 4% 16%;
-            --muted-foreground: 240 5% 64.9%;
-            --accent: 83 78% 68%;
-            --accent-foreground: 0 0% 0%;
-            --destructive: 0 62.8% 30.6%;
-            --destructive-foreground: 0 0% 98%;
-            --border: 240 4% 16%;
-            --input: 240 4% 16%;
-            --ring: 350 89% 60%;
-            --radius: 0.75rem;
-            
-            /* RGB values for rgba usage */
-            --background-rgb: 10, 10, 15;
-            --card-rgb: 26, 26, 35;
-            --muted-rgb: 40, 40, 50;
-            
-            /* Color tokens */
-            --rose-500: #ec4899;
-            --lime-400: #bef264;
-            --orange-400: #fb923c;
-            --blue-400: #60a5fa;
-            --purple-500: #a855f7;
-            --amber-500: #f59e0b;
-            --violet-500: #8b5cf6;
-            --green-500: #22c55e;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: hsl(var(--background));
-            color: hsl(var(--foreground));
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Desktop Sidebar */
-        .sidebar {
-            width: 80px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 40;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid hsla(var(--border), 0.5);
-            background: hsla(var(--card), 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .logo-area {
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-        }
-
-        .logo {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            background: linear-gradient(to bottom right, var(--rose-500), var(--orange-400));
-            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.25);
-            color: white;
-        }
-
-        .logo svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .nav-menu {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            color: hsl(var(--muted-foreground));
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            background: hsl(var(--muted));
-            color: hsl(var(--foreground));
-        }
-
-        .nav-item.active {
-            background: hsla(350, 89%, 60%, 0.1);
-            color: hsl(var(--primary));
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 4px;
-            height: 32px;
-            border-radius: 0 4px 4px 0;
-            background: hsl(var(--primary));
-            animation: slideIn 0.3s ease;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .nav-item .tooltip {
-            position: absolute;
-            left: 100%;
-            margin-left: 12px;
-            padding: 6px 12px;
-            background: hsl(var(--popover));
-            color: hsl(var(--popover-foreground));
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            z-index: 50;
-            border: 1px solid hsla(var(--border), 0.5);
-        }
-
-        .nav-item:hover .tooltip {
-            opacity: 1;
-        }
-
-        .settings-area {
-            padding: 16px;
-            border-top: 1px solid hsla(var(--border), 0.5);
-        }
-
-        /* Main Content */
-        .main-wrapper {
-            flex: 1;
-            margin-left: 80px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Header */
-        .header {
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-            background: hsla(var(--background), 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 20px 24px;
-            flex-shrink: 0;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: hsla(350, 89%, 60%, 0.1);
-            color: var(--rose-500);
-        }
-
-        .header-icon svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .header-text h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: hsl(var(--foreground));
-            margin-bottom: 4px;
-        }
-
-        .header-text p {
-            font-size: 14px;
-            color: hsl(var(--muted-foreground));
-        }
-
-        /* Container */
-        .container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-        }
-
-        .container::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .container::-webkit-scrollbar-track {
-            background: hsla(var(--muted), 0.3);
-        }
-
-        .container::-webkit-scrollbar-thumb {
-            background: hsla(var(--muted-foreground), 0.3);
-            border-radius: 3px;
-        }
-
-        .container::-webkit-scrollbar-thumb:hover {
-            background: hsla(var(--muted-foreground), 0.5);
-        }
-
-        /* Balance Card */
-        .balance-card {
-            background: linear-gradient(135deg, hsla(240, 6%, 10%, 0.9), hsla(240, 6%, 8%, 0.9));
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 24px;
-            padding: 28px;
-            margin-bottom: 28px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .balance-header {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        @media (min-width: 768px) {
-            .balance-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: flex-end;
-            }
-        }
-
-        .balance-info h2 {
-            font-size: 14px;
-            font-weight: 500;
-            color: hsl(var(--muted-foreground));
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .balance-amount {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, var(--lime-400) 0%, #65a30d 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .balance-referral {
-            font-size: 14px;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .balance-referral .amount {
-            color: var(--lime-400);
-            font-weight: 600;
-        }
-
-        .balance-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .btn-primary {
-            background: var(--lime-400);
-            color: #000;
-            box-shadow: 0 0 20px rgba(190, 242, 100, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: #a3e635;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(190, 242, 100, 0.4);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid hsla(var(--border), 0.5);
-            color: hsl(var(--foreground));
-        }
-
-        .btn-secondary:hover {
-            background: hsl(var(--muted));
-            border-color: hsla(var(--border), 0.8);
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        @media (min-width: 768px) {
-            .quick-actions {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        .action-card {
-            background: hsl(var(--card));
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: hsl(var(--foreground));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .action-card:hover {
-            background: hsla(var(--muted), 0.5);
-            border-color: var(--rose-500);
-            transform: translateY(-4px);
-        }
-
-        .action-icon {
-            font-size: 32px;
-        }
-
-        .action-label {
-            font-size: 15px;
-            font-weight: 600;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            margin-top: 24px;
-            font-family: 'Outfit', sans-serif;
-            color: hsl(var(--foreground));
-        }
-
-        .transactions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .transaction-item {
-            background: hsl(var(--card));
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-
-        .transaction-item:hover {
-            background: hsla(var(--muted), 0.5);
-            border-color: hsla(var(--border), 0.8);
-        }
-
-        .transaction-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-        }
-
-        .transaction-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .transaction-icon.deposit {
-            background: rgba(190, 242, 100, 0.1);
-            color: var(--lime-400);
-        }
-
-        .transaction-icon.withdraw {
-            background: rgba(236, 72, 153, 0.1);
-            color: var(--rose-500);
-        }
-
-        .transaction-icon.gift-sent {
-            background: rgba(236, 72, 153, 0.1);
-            color: var(--rose-500);
-        }
-
-        .transaction-icon.gift-received {
-            background: rgba(190, 242, 100, 0.1);
-            color: var(--lime-400);
-        }
-
-        .transaction-icon.subscription {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--violet-500);
-        }
-
-        .transaction-icon.referral {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--green-500);
-        }
-
-        .transaction-icon.boost {
-            background: rgba(168, 85, 247, 0.1);
-            color: var(--purple-500);
-        }
-
-        .transaction-details {
-            flex: 1;
-        }
-
-        .transaction-title {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 4px;
-            color: hsl(var(--foreground));
-        }
-
-        .transaction-time {
-            color: hsl(var(--muted-foreground));
-            font-size: 12px;
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-            font-size: 16px;
-            text-align: right;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .transaction-amount.positive {
-            color: var(--lime-400);
-        }
-
-        .transaction-amount.negative {
-            color: var(--rose-500);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: hsl(var(--card));
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 24px;
-            padding: 28px;
-            width: 90%;
-            max-width: 500px;
-            animation: slideUp 0.3s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-title {
-            font-size: 22px;
-            font-weight: 700;
-            font-family: 'Outfit', sans-serif;
-            color: hsl(var(--foreground));
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: hsl(var(--muted-foreground));
-            font-size: 24px;
-            cursor: pointer;
-            transition: color 0.2s;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-        }
-
-        .modal-close:hover {
-            color: hsl(var(--foreground));
-            background: hsl(var(--muted));
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: hsl(var(--foreground));
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: hsla(var(--muted), 0.3);
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 12px;
-            color: hsl(var(--foreground));
-            font-size: 15px;
-            transition: all 0.2s;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .form-input:focus {
-            outline: none;
-            background: hsla(var(--muted), 0.5);
-            border-color: var(--rose-500);
-            box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.1);
-        }
-
-        .preset-amounts {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .preset-btn {
-            padding: 10px;
-            background: hsla(var(--muted), 0.3);
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 10px;
-            color: hsl(var(--foreground));
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-
-        .preset-btn:hover {
-            background: var(--lime-400);
-            color: #000;
-            border-color: var(--lime-400);
-        }
-
-        .gift-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .gift-item {
-            aspect-ratio: 1;
-            background: hsla(var(--muted), 0.3);
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-            padding: 12px;
-        }
-
-        .gift-item:hover {
-            background: hsla(350, 89%, 60%, 0.1);
-            border-color: var(--rose-500);
-            transform: scale(1.05);
-        }
-
-        .gift-emoji {
-            font-size: 24px;
-        }
-
-        .gift-price {
-            font-size: 12px;
-            color: hsl(var(--muted-foreground));
-            font-weight: 600;
-        }
-
-        .payment-methods {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .payment-btn {
-            padding: 16px;
-            background: hsla(var(--muted), 0.3);
-            border: 1px solid hsla(var(--border), 0.5);
-            border-radius: 12px;
-            color: hsl(var(--foreground));
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .payment-btn:hover {
-            background: hsla(var(--muted), 0.5);
-            border-color: var(--lime-400);
-        }
-
-        .payment-btn.active {
-            background: rgba(190, 242, 100, 0.1);
-            border-color: var(--lime-400);
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .modal-footer button {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .btn-cancel {
-            background: hsla(var(--muted), 0.3);
-            color: hsl(var(--foreground));
-            border: 1px solid hsla(var(--border), 0.5);
-        }
-
-        .btn-cancel:hover {
-            background: hsla(var(--muted), 0.5);
-        }
-
-        .btn-submit {
-            background: var(--lime-400);
-            color: #000;
-        }
-
-        .btn-submit:hover {
-            background: #a3e635;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(190, 242, 100, 0.4);
-        }
-
-        .success-message {
-            background: rgba(190, 242, 100, 0.1);
-            border: 1px solid rgba(190, 242, 100, 0.3);
-            color: var(--lime-400);
-            padding: 14px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .success-message.show {
-            display: block;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .info-text {
-            color: hsl(var(--muted-foreground));
-            font-size: 13px;
-            margin-top: 8px;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 1024px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .main-wrapper {
-                margin-left: 0;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .balance-amount {
-                font-size: 36px;
-            }
-            
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .gift-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-            }
-            
-            .gift-emoji {
-                font-size: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Desktop Sidebar -->
-    <aside class="sidebar">
-        <div class="logo-area">
-            <a href="/discover" class="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-            </a>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="wallet.css" />
+  </head>
+  <body class="dark">
+    <div class="app">
+      <aside class="spurtlinks-sidebar" id="spurtlinksSidebar">
+        <div class="sidebar-header">
+          <a href="/discover.html" class="logo">
+            <img src="logo.png" alt="logo" />
+            <span>SpurtLinks</span>
+          </a>
+          <button class="sidebar-close-btn" id="sidebarCloseBtn">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        
-        <nav class="nav-menu">
-            <a href="/discover" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2v20M2 12h20"/>
-                </svg>
-                <span class="tooltip">Discover</span>
-            </a>
-            
-            <a href="/matches" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-                <span class="tooltip">Matches</span>
-            </a>
-            
-            <a href="/chat" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span class="tooltip">Chat</span>
-            </a>
-            
-            <a href="/wallet" class="nav-item active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                    <line x1="16" y1="12" x2="16" y2="12.01"/>
-                </svg>
-                <span class="tooltip">Wallet</span>
-            </a>
-            
-            <a href="/profile" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <span class="tooltip">Profile</span>
-            </a>
-        </nav>
-        
-        <div class="settings-area">
-            <a href="/settings" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-                <span class="tooltip">Settings</span>
-            </a>
-        </div>
-    </aside>
 
-    <div class="main-wrapper">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="header-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="5" width="20" height="14" rx="2"/>
-                        <line x1="16" y1="12" x2="16" y2="12.01"/>
-                    </svg>
-                </div>
-                <div class="header-text">
-                    <h1>Wallet</h1>
-                    <p>Manage your funds & transactions</p>
-                </div>
-            </div>
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+        <div class="sidebar-footer">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon" style="display: none"></i>
+            <span class="nav-label">Dark mode</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="content">
+        <header>
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1>
+            <i class="fas fa-wallet"></i>
+            SpotPay
+          </h1>
+          <div class="profile">
+            <i class="fas fa-circle-user fa-xl"></i>
+          </div>
         </header>
+        <div class="main-content">
+          <div class="spurtnumber-container">
+            <div class="spurtnumber-badge">
+              <i class="fas fa-hashtag"></i> SP-1234-5678
+            </div>
+            <button class="copy-btn" onclick="copySpurtNumber()">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
 
-        <!-- Main Content -->
-        <div class="container">
-            <!-- Balance Card -->
-            <div class="balance-card">
-                <div class="balance-header">
-                    <div class="balance-info">
-                        <h2>Available Balance</h2>
-                        <div class="balance-amount">$5,234.50</div>
-                        <div class="balance-referral">Referral earnings: <span class="amount">+$342.00</span></div>
-                    </div>
-                    <div class="balance-actions">
-                        <button class="btn btn-primary" onclick="openModal('addMoneyModal')">
-                            <span>➕</span> Add Money
-                        </button>
-                        <button class="btn btn-secondary" onclick="openModal('withdrawModal')">
-                            <span>⬆️</span> Withdraw
-                        </button>
-                    </div>
-                </div>
+          <div class="balances-grid">
+            <div class="balance-card available">
+              <div class="balance-header">
+                <h2>Available Balance</h2>
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="balance-amount usd">$5,234.50</div>
+              <div class="balance-amount btc">≈ 0.0845 BTC</div>
+              <div class="balance-note">For withdrawals and purchases</div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="action-card" onclick="openModal('giftModal')">
-                    <span class="action-icon">🎁</span>
-                    <span class="action-label">Send Gift</span>
-                </button>
-                <button class="action-card" onclick="alert('✨ Upgrade to Premium')">
-                    <span class="action-icon">⭐</span>
-                    <span class="action-label">Upgrade</span>
-                </button>
-                <button class="action-card" onclick="alert('👥 Refer friends and earn')">
-                    <span class="action-icon">👥</span>
-                    <span class="action-label">Referrals</span>
-                </button>
-                <button class="action-card" onclick="alert('📋 View all transactions')">
-                    <span class="action-icon">📋</span>
-                    <span class="action-label">History</span>
-                </button>
+            <div class="balance-card referral">
+              <div class="balance-header">
+                <h2>Referral Balance</h2>
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="balance-amount usd">$342.00</div>
+              <div class="balance-note">
+                Can only be spent on platform services
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="action-card" onclick="openModal('addMoneyModal')">
+              <span class="action-icon">➕</span>
+              <span class="action-label">Deposit</span>
+            </button>
+            <button class="action-card" onclick="openModal('withdrawModal')">
+              <span class="action-icon">⬆️</span>
+              <span class="action-label">Withdraw</span>
+            </button>
+            <button class="action-card" onclick="openModal('giftModal')">
+              <span class="action-icon">🎁</span>
+              <span class="action-label">Send Gift</span>
+            </button>
+            <button
+              class="action-card"
+              onclick="openModal('subscriptionModal')"
+            >
+              <span class="action-icon">⭐</span>
+              <span class="action-label">Subscribe</span>
+            </button>
+            <button
+              class="action-card"
+              onclick="openModal('subscribeOtherModal')"
+            >
+              <span class="action-icon">👥</span>
+              <span class="action-label">Subscribe for User</span>
+            </button>
+            <button
+              class="action-card"
+              onclick="alert('Referral program - Invite friends and earn!')"
+            >
+              <span class="action-icon">🔗</span>
+              <span class="action-label">Referrals</span>
+            </button>
+          </div>
+
+          <div class="tabs-container">
+            <div class="tabs" id="transactionTabs">
+              <button class="tab-btn active" data-tab="all">All</button>
+              <button class="tab-btn" data-tab="deposits">Deposits</button>
+              <button class="tab-btn" data-tab="withdrawals">
+                Withdrawals
+              </button>
+              <button class="tab-btn" data-tab="gifts">Gifts</button>
+              <button class="tab-btn" data-tab="referrals">Referrals</button>
+              <button class="tab-btn" data-tab="subscriptions">
+                Subscriptions
+              </button>
+            </div>
+          </div>
+
+          <div class="transactions-list" id="transactionsList">
+            <div class="transaction-item" data-type="deposit">
+              <div class="transaction-left">
+                <div class="transaction-icon deposit">💰</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Deposit</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-spurtnumber">SP-1234-5678</span>
+                    <span class="transaction-time">Today at 2:45 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount positive">
+                +$100.00
+                <div class="original-currency">KES 14,500</div>
+              </div>
             </div>
 
-            <!-- Recent Transactions -->
-            <h2 class="section-title">Recent Transactions</h2>
-            <div class="transactions-list">
-                <div class="transaction-item">
-                    <div class="transaction-left">
-                        <div class="transaction-icon deposit">💰</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">Deposit</div>
-                            <div class="transaction-time">Today at 2:45 PM</div>
-                        </div>
-                    </div>
-                    <div class="transaction-amount positive">+$100.00</div>
+            <div class="transaction-item" data-type="gift">
+              <div class="transaction-left">
+                <div class="transaction-icon gift-sent">🎁</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Gift Sent to Sarah</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-spurtnumber">SP-8765-4321</span>
+                    <span class="transaction-time">Today at 1:20 PM</span>
+                  </div>
                 </div>
-
-                <div class="transaction-item">
-                    <div class="transaction-left">
-                        <div class="transaction-icon gift-sent">🎁</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">Gift Sent to Sarah</div>
-                            <div class="transaction-time">Today at 1:20 PM</div>
-                        </div>
-                    </div>
-                    <div class="transaction-amount negative">-$10.00</div>
-                </div>
-
-                <div class="transaction-item">
-                    <div class="transaction-left">
-                        <div class="transaction-icon subscription">✨</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">Premium Subscription</div>
-                            <div class="transaction-time">Yesterday at 12:00 AM</div>
-                        </div>
-                    </div>
-                    <div class="transaction-amount negative">-$9.99</div>
-                </div>
-
-                <div class="transaction-item">
-                    <div class="transaction-left">
-                        <div class="transaction-icon gift-received">🎉</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">Gift Received from Mike</div>
-                            <div class="transaction-time">3 days ago at 6:35 PM</div>
-                        </div>
-                    </div>
-                    <div class="transaction-amount positive">+$5.00</div>
-                </div>
-
-                <div class="transaction-item">
-                    <div class="transaction-left">
-                        <div class="transaction-icon referral">🌟</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">Referral Bonus</div>
-                            <div class="transaction-time">5 days ago at 3:10 PM</div>
-                        </div>
-                    </div>
-                    <div class="transaction-amount positive">+$25.00</div>
-                </div>
+              </div>
+              <div class="transaction-amount negative">-$10.00</div>
             </div>
+
+            <div class="transaction-item" data-type="referral">
+              <div class="transaction-left">
+                <div class="transaction-icon referral">👥</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Referral Bonus (New User)</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-spurtnumber">SP-2468-1357</span>
+                    <span class="transaction-time">Yesterday at 3:30 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount positive referral">+$1.00</div>
+            </div>
+
+            <div class="transaction-item" data-type="referral">
+              <div class="transaction-left">
+                <div class="transaction-icon referral">👥</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">
+                    Referral Bonus (Subscription)
+                  </div>
+                  <div class="transaction-meta">
+                    <span class="transaction-spurtnumber">SP-2468-1357</span>
+                    <span class="transaction-time">Yesterday at 3:30 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount positive">+$1.00</div>
+            </div>
+
+            <div class="transaction-item" data-type="withdrawal">
+              <div class="transaction-left">
+                <div class="transaction-icon withdraw">💸</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Withdrawal to M-Pesa</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-time">2 days ago at 10:15 AM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount negative">-$50.00</div>
+            </div>
+
+            <div class="transaction-item" data-type="gift">
+              <div class="transaction-left">
+                <div class="transaction-icon gift-received">🎁</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Gift Received from Mike</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-spurtnumber">SP-5678-1234</span>
+                    <span class="transaction-time">3 days ago at 6:35 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount positive">+$5.00</div>
+            </div>
+
+            <div class="transaction-item" data-type="subscription">
+              <div class="transaction-left">
+                <div class="transaction-icon subscription">⭐</div>
+                <div class="transaction-details">
+                  <div class="transaction-title">Premium Subscription</div>
+                  <div class="transaction-meta">
+                    <span class="transaction-time">5 days ago at 12:00 AM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="transaction-amount negative">-$9.99</div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Add Money Modal -->
+    <!-- Deposit Modal -->
     <div id="addMoneyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add Money</h2>
-                <button class="modal-close" onclick="closeModal('addMoneyModal')">✕</button>
-            </div>
-            <div class="success-message" id="addMoneySuccess">✓ Successfully added to your wallet!</div>
-            <form onsubmit="handleAddMoney(event)">
-                <div class="form-group">
-                    <label class="form-label">Amount (USD)</label>
-                    <input type="number" id="addAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
-                </div>
-                <div class="preset-amounts">
-                    <button type="button" class="preset-btn" onclick="setAmount('addAmount', 10)">$10</button>
-                    <button type="button" class="preset-btn" onclick="setAmount('addAmount', 25)">$25</button>
-                    <button type="button" class="preset-btn" onclick="setAmount('addAmount', 50)">$50</button>
-                    <button type="button" class="preset-btn" onclick="setAmount('addAmount', 100)">$100</button>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Payment Method</label>
-                    <div class="payment-methods">
-                        <button type="button" class="payment-btn active">
-                            💳 Card
-                        </button>
-                        <button type="button" class="payment-btn">
-                            📱 M-Pesa
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal('addMoneyModal')">Cancel</button>
-                    <button type="submit" class="btn-submit">Add Money</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Deposit Funds</h2>
+          <button class="modal-close" onclick="closeModal('addMoneyModal')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="success-message" id="addMoneySuccess">
+          ✓ Deposit initiated successfully!
+        </div>
+        <form onsubmit="handleAddMoney(event)">
+          <div class="form-group">
+            <label class="form-label">Amount (USD)</label>
+            <input
+              type="number"
+              id="addAmount"
+              class="form-input"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+              required
+            />
+          </div>
+          <div class="preset-amounts">
+            <button
+              type="button"
+              class="preset-btn"
+              onclick="setAmount('addAmount', 10)"
+            >
+              $10
+            </button>
+            <button
+              type="button"
+              class="preset-btn"
+              onclick="setAmount('addAmount', 25)"
+            >
+              $25
+            </button>
+            <button
+              type="button"
+              class="preset-btn"
+              onclick="setAmount('addAmount', 50)"
+            >
+              $50
+            </button>
+            <button
+              type="button"
+              class="preset-btn"
+              onclick="setAmount('addAmount', 100)"
+            >
+              $100
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+            >
+              <button
+                type="button"
+                class="payment-btn form-input"
+                style="
+                  padding: 12px;
+                  background: rgba(190, 242, 100, 0.1);
+                  border: 1px solid var(--lime-400);
+                  cursor: pointer;
+                  border-radius: 12px;
+                "
+              >
+                💳 Card
+              </button>
+              <button
+                type="button"
+                class="payment-btn form-input"
+                style="
+                  padding: 12px;
+                  background: hsla(var(--muted), 0.3);
+                  border: 1px solid hsla(var(--border), 0.5);
+                  cursor: pointer;
+                  border-radius: 12px;
+                "
+              >
+                📱 M-Pesa
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="closeModal('addMoneyModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">Deposit</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Withdraw Funds</h2>
-                <button class="modal-close" onclick="closeModal('withdrawModal')">✕</button>
-            </div>
-            <div class="success-message" id="withdrawSuccess">✓ Withdrawal initiated successfully!</div>
-            <form onsubmit="handleWithdraw(event)">
-                <div class="form-group">
-                    <label class="form-label">Amount (USD)</label>
-                    <input type="number" id="withdrawAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
-                    <p class="info-text">Available balance: $5,234.50</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal('withdrawModal')">Cancel</button>
-                    <button type="submit" class="btn-submit">Withdraw</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Withdraw Funds</h2>
+          <button class="modal-close" onclick="closeModal('withdrawModal')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="success-message" id="withdrawSuccess">
+          ✓ Withdrawal initiated successfully!
+        </div>
+        <form onsubmit="handleWithdraw(event)">
+          <div class="form-group">
+            <label class="form-label">Amount (USD)</label>
+            <input
+              type="number"
+              id="withdrawAmount"
+              class="form-input"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+              required
+            />
+            <p
+              style="
+                color: hsl(var(--muted-foreground));
+                font-size: 13px;
+                margin-top: 8px;
+              "
+            >
+              Available: $5,234.50
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Withdrawal Method</label>
+            <div class="withdrawal-methods">
+              <div
+                class="withdraw-method active"
+                onclick="selectWithdrawMethod('mpesa', this)"
+              >
+                <i class="fas fa-mobile-alt"></i>
+                <span>M-Pesa</span>
+              </div>
+              <div
+                class="withdraw-method"
+                onclick="selectWithdrawMethod('paypal', this)"
+              >
+                <i class="fab fa-paypal"></i>
+                <span>PayPal</span>
+              </div>
+              <div
+                class="withdraw-method"
+                onclick="selectWithdrawMethod('binance', this)"
+              >
+                <i class="fas fa-coins"></i>
+                <span>Binance</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" id="mpesaDetails">
+            <label class="form-label">M-Pesa Phone Number</label>
+            <input type="tel" class="form-input" placeholder="07XX XXX XXX" />
+          </div>
+
+          <div class="form-group" id="paypalDetails" style="display: none">
+            <label class="form-label">PayPal Email</label>
+            <input
+              type="email"
+              class="form-input"
+              placeholder="email@example.com"
+            />
+          </div>
+
+          <div class="form-group" id="binanceDetails" style="display: none">
+            <label class="form-label">Binance ID</label>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="Enter your Binance ID"
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="closeModal('withdrawModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">Withdraw</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Gift Modal -->
     <div id="giftModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Send a Gift</h2>
-                <button class="modal-close" onclick="closeModal('giftModal')">✕</button>
-            </div>
-            <div class="gift-grid">
-                <button type="button" class="gift-item" onclick="selectGift('☕', '$3')">
-                    <span class="gift-emoji">☕</span>
-                    <span class="gift-price">$3</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('🍿', '$5')">
-                    <span class="gift-emoji">🍿</span>
-                    <span class="gift-price">$5</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('🍕', '$7')">
-                    <span class="gift-emoji">🍕</span>
-                    <span class="gift-price">$7</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('🎂', '$10')">
-                    <span class="gift-emoji">🎂</span>
-                    <span class="gift-price">$10</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('💐', '$15')">
-                    <span class="gift-emoji">💐</span>
-                    <span class="gift-price">$15</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('💎', '$25')">
-                    <span class="gift-emoji">💎</span>
-                    <span class="gift-price">$25</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('🏆', '$50')">
-                    <span class="gift-emoji">🏆</span>
-                    <span class="gift-price">$50</span>
-                </button>
-                <button type="button" class="gift-item" onclick="selectGift('👑', '$100')">
-                    <span class="gift-emoji">👑</span>
-                    <span class="gift-price">$100</span>
-                </button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Send a Gift</h2>
+          <button class="modal-close" onclick="closeModal('giftModal')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Gifts once sent cannot be reversed</span>
+        </div>
+        <form onsubmit="handleGift(event)">
+          <div class="form-group">
+            <label class="form-label">Recipient SpurtNumber</label>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="SP-XXXX-XXXX"
+              required
+            />
+          </div>
+
+          <label class="form-label">Select Gift</label>
+          <div class="gift-grid">
+            <div class="gift-item" onclick="selectGift('Roses', '1')">
+              <span class="gift-emoji">🌹</span>
+              <span class="gift-name">Roses</span>
+              <span class="gift-price">$1</span>
+            </div>
+            <div class="gift-item" onclick="selectGift('Silver', '1')">
+              <span class="gift-emoji">🥈</span>
+              <span class="gift-name">Silver</span>
+              <span class="gift-price">$1</span>
+            </div>
+            <div class="gift-item" onclick="selectGift('Gold', '1')">
+              <span class="gift-emoji">🥇</span>
+              <span class="gift-name">Gold</span>
+              <span class="gift-price">$1</span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="closeModal('giftModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">Send Gift</button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <script>
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            // Hide success message if showing
-            const successMsg = document.querySelector(`#${modalId} .success-message`);
-            if (successMsg) successMsg.classList.remove('show');
-        }
+    <!-- Subscribe for Another User Modal -->
+    <div id="subscribeOtherModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Subscribe for Another User</h2>
+          <button
+            class="modal-close"
+            onclick="closeModal('subscribeOtherModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form onsubmit="handleSubscribeOther(event)">
+          <div class="form-group">
+            <label class="form-label">User's SpurtNumber</label>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="SP-XXXX-XXXX"
+              required
+            />
+          </div>
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
+          <div class="form-group">
+            <label class="form-label">Select Plan</label>
+            <select class="form-input">
+              <option>Premium Monthly - $9.99</option>
+              <option>Premium Yearly - $99.99</option>
+              <option>Platinum Monthly - $19.99</option>
+              <option>Platinum Yearly - $199.99</option>
+            </select>
+          </div>
 
-        function setAmount(inputId, amount) {
-            document.getElementById(inputId).value = amount;
-        }
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="closeModal('subscribeOtherModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-        function handleAddMoney(e) {
-            e.preventDefault();
-            const amount = document.getElementById('addAmount').value;
-            if (amount && amount > 0) {
-                document.getElementById('addMoneySuccess').classList.add('show');
-                setTimeout(() => closeModal('addMoneyModal'), 1500);
-            }
-        }
+    <div class="copy-notification" id="copyNotification">
+      <i class="fas fa-check-circle"></i> SpurtNumber copied to clipboard!
+    </div>
 
-        function handleWithdraw(e) {
-            e.preventDefault();
-            const amount = document.getElementById('withdrawAmount').value;
-            if (amount && amount > 0) {
-                document.getElementById('withdrawSuccess').classList.add('show');
-                setTimeout(() => closeModal('withdrawModal'), 1500);
-            }
-        }
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+      <div class="mobile-nav-items">
+        <a href="/discover.html" class="mobile-nav-item active">
+          <i class="fas fa-compass"></i>
+          <span>Discover</span>
+        </a>
+        <a href="/matches.html" class="mobile-nav-item">
+          <i class="fas fa-heart"></i>
+          <span>Matches</span>
+        </a>
+        <a href="/chat-list.html" class="mobile-nav-item">
+          <i class="fas fa-comment"></i>
+          <span>Chat</span>
+        </a>
+        <a href="/wallet.html" class="mobile-nav-item">
+          <i class="fas fa-wallet"></i>
+          <span>Wallet</span>
+        </a>
+        <a href="/profile.html" class="mobile-nav-item">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </div>
+    </nav>
 
-        function selectGift(emoji, price) {
-            alert(`Selected ${emoji} for ${price}`);
-            closeModal('giftModal');
-        }
-
-        // Close modal when clicking background
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        // Payment method selection
-        document.querySelectorAll('.payment-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
-</body>
+    <script src="sidebar.js"></script>
+    <script src="wallet.js"></script>
+  </body>
 </html>

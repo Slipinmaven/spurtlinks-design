@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <title>Chat with Sarah - SpurtLinks</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="chat-detail.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="spurtlinks-sidebar" id="spurtlinksSidebar">
+        <div class="sidebar-header">
+          <a href="/discover.html" class="logo">
+            <img src="logo.png" alt="logo" />
+            <span>SpurtLinks</span>
+          </a>
+          <button class="sidebar-close-btn" id="sidebarCloseBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+        <div class="sidebar-footer">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon" style="display: none"></i>
+            <span class="nav-label">Dark mode</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="content">
+        <div class="main-content">
+          <div class="chat-header">
+            <div class="chat-header-left">
+              <button class="back-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+              </button>
+              <div class="chat-user-info">
+                <div class="chat-avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Sarah"
+                  />
+                  <div
+                    class="online-indicator"
+                    style="bottom: 0; right: 0"
+                  ></div>
+                </div>
+                <div class="chat-user-details">
+                  <h3>
+                    Sarah Kimani
+                    <i class="fas fa-check-circle verified-badge"></i>
+                  </h3>
+                  <div class="chat-user-status">
+                    <span class="status-dot"></span>
+                    <span>Online</span>
+                    <span>· 2 km away</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="chat-header-actions">
+              <button class="header-action-btn">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="messages-container" id="messagesContainer">
+            <div class="date-divider">
+              <span>Today</span>
+            </div>
+
+            <!-- Received message -->
+            <div class="message-wrapper">
+              <div class="message-avatar">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                  alt="Sarah"
+                />
+              </div>
+              <div class="message-content">
+                <div class="message-bubble">
+                  Hey! How are you? I was thinking we could grab coffee sometime
+                  this week ☕
+                </div>
+                <div class="message-time">10:30 AM</div>
+              </div>
+            </div>
+
+            <!-- Own message -->
+            <div class="message-wrapper own-message">
+              <div class="message-avatar own-avatar"></div>
+              <div class="message-content">
+                <div class="message-bubble">
+                  Hey Sarah! I'm doing great, thanks for asking. Coffee sounds
+                  wonderful! I'd love to. When were you thinking? 😊
+                </div>
+                <div class="message-time">
+                  10:32 AM
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Received message with image -->
+            <div class="message-wrapper">
+              <div class="message-avatar">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                  alt="Sarah"
+                />
+              </div>
+              <div class="message-content">
+                <div class="message-bubble image-message">
+                  <img
+                    src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                    alt="Coffee shop"
+                    onclick="window.open(this.src)"
+                  />
+                  <div style="margin-top: 8px">
+                    This place looks amazing! How about here? ☕
+                  </div>
+                </div>
+                <div class="message-time">10:35 AM</div>
+              </div>
+            </div>
+
+            <!-- Own message with GIF -->
+            <div class="message-wrapper own-message">
+              <div class="message-avatar own-avatar"></div>
+              <div class="message-content">
+                <div class="message-bubble gif-message">
+                  <img
+                    src="https://media.giphy.com/media/3o7abB06u9bNzA8LC8/giphy.gif"
+                    alt="Excited GIF"
+                    style="max-width: 200px"
+                  />
+                  <div style="margin-top: 8px">
+                    That looks perfect! Can't wait! 🎉
+                  </div>
+                </div>
+                <div class="message-time">
+                  10:38 AM
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Voice message -->
+            <div class="message-wrapper">
+              <div class="message-avatar">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                  alt="Sarah"
+                />
+              </div>
+              <div class="message-content">
+                <div class="message-bubble voice-message">
+                  <i
+                    class="fas fa-play-circle"
+                    style="font-size: 24px; cursor: pointer"
+                  ></i>
+                  <div class="voice-wave">
+                    <span></span><span></span><span></span><span></span
+                    ><span></span>
+                  </div>
+                  <span class="voice-duration">0:24</span>
+                </div>
+                <div class="message-time">10:40 AM</div>
+              </div>
+            </div>
+
+            <!-- Typing indicator -->
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <!-- Gift suggestion -->
+            <div class="gift-suggestion">
+              <div class="gift-suggestion-content">
+                <div class="gift-suggestion-icon">
+                  <i class="fas fa-gift"></i>
+                </div>
+                <div class="gift-suggestion-text">
+                  <h4>Send Sarah a gift</h4>
+                  <p>Make her day with a virtual gift</p>
+                </div>
+              </div>
+              <button class="gift-suggestion-btn" onclick="openGiftModal()">
+                <i class="fas fa-gift"></i> Send Gift
+              </button>
+            </div>
+          </div>
+
+          <div class="message-input-container">
+            <button class="attach-btn" id="attachBtn">
+              <i class="fas fa-plus"></i>
+            </button>
+            <div class="message-input-wrapper">
+              <textarea
+                class="message-input"
+                id="messageInput"
+                placeholder="Type a message..."
+                rows="1"
+              ></textarea>
+              <div class="emoji-picker" id="emojiPicker">
+                <span>😊</span><span>😂</span><span>😍</span><span>🥰</span
+                ><span>😘</span><span>😎</span> <span>👍</span><span>❤️</span
+                ><span>🎉</span><span>🔥</span><span>✨</span><span>💯</span>
+              </div>
+            </div>
+            <button class="send-btn" id="sendBtn" disabled>
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gift Modal -->
+    <div id="giftModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Send a Gift to Sarah</h2>
+          <button class="modal-close" onclick="closeModal('giftModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Gifts once sent cannot be reversed</span>
+        </div>
+        <div class="gift-grid">
+          <div class="gift-item" onclick="selectGift('Roses', '1')">
+            <span class="gift-emoji">🌹</span>
+            <span class="gift-name">Roses</span>
+            <span class="gift-price">$1</span>
+          </div>
+          <div class="gift-item" onclick="selectGift('Silver', '1')">
+            <span class="gift-emoji">🥈</span>
+            <span class="gift-name">Silver</span>
+            <span class="gift-price">$1</span>
+          </div>
+          <div class="gift-item" onclick="selectGift('Gold', '1')">
+            <span class="gift-emoji">🥇</span>
+            <span class="gift-name">Gold</span>
+            <span class="gift-price">$1</span>
+          </div>
+          <div class="gift-item" onclick="selectGift('Chocolate', '2')">
+            <span class="gift-emoji">🍫</span>
+            <span class="gift-name">Chocolate</span>
+            <span class="gift-price">$2</span>
+          </div>
+          <div class="gift-item" onclick="selectGift('Teddy', '3')">
+            <span class="gift-emoji">🧸</span>
+            <span class="gift-name">Teddy Bear</span>
+            <span class="gift-price">$3</span>
+          </div>
+          <div class="gift-item" onclick="selectGift('Cake', '5')">
+            <span class="gift-emoji">🎂</span>
+            <span class="gift-name">Birthday Cake</span>
+            <span class="gift-price">$5</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn-cancel"
+            onclick="closeModal('giftModal')"
+          >
+            Cancel
+          </button>
+          <button type="button" class="btn-submit" onclick="sendGift()">
+            Send Gift
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+      // Message input handling
+      const messageInput = document.getElementById("messageInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const messagesContainer = document.getElementById("messagesContainer");
+
+      messageInput.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+        sendBtn.disabled = this.value.trim() === "";
+      });
+
+      messageInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (this.value.trim() !== "") {
+            sendMessage();
+          }
+        }
+      });
+
+      sendBtn.addEventListener("click", sendMessage);
+
+      function sendMessage() {
+        const message = messageInput.value.trim();
+        if (message === "") return;
+
+        // Create new message element
+        const messageWrapper = document.createElement("div");
+        messageWrapper.className = "message-wrapper own-message";
+
+        const now = new Date();
+        const timeStr =
+          now.getHours() + ":" + now.getMinutes().toString().padStart(2, "0");
+
+        messageWrapper.innerHTML = `
+                <div class="message-avatar own-avatar"></div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        ${message}
+                    </div>
+                    <div class="message-time">
+                        ${timeStr}
+                        <span class="message-status">
+                            <i class="fas fa-check"></i>
+                            Sent
+                        </span>
+                    </div>
+                </div>
+            `;
+
+        messagesContainer.appendChild(messageWrapper);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Clear input
+        messageInput.value = "";
+        messageInput.style.height = "auto";
+        sendBtn.disabled = true;
+      }
+
+      // Emoji picker
+      const attachBtn = document.getElementById("attachBtn");
+      const emojiPicker = document.getElementById("emojiPicker");
+
+      attachBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        emojiPicker.classList.toggle("show");
+      });
+
+      document.querySelectorAll(".emoji-picker span").forEach((emoji) => {
+        emoji.addEventListener("click", function () {
+          messageInput.value += this.textContent;
+          messageInput.dispatchEvent(new Event("input"));
+          emojiPicker.classList.remove("show");
+        });
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!attachBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+          emojiPicker.classList.remove("show");
+        }
+      });
+
+      // Scroll to bottom on load
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Modal functions
+      function openGiftModal() {
+        document.getElementById("giftModal").classList.add("active");
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+
+      function selectGift(name, price) {
+        alert(`Selected ${name} gift for $${price}`);
+      }
+
+      function sendGift() {
+        alert("Gift sent successfully!");
+        closeModal("giftModal");
+      }
+
+      document.querySelectorAll(".modal").forEach((modal) => {
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.classList.remove("active");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

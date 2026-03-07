@@ -1,905 +1,998 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SpurtLinks - Find Your Perfect Match</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        :root {
-            --rose-500: #f43f5e;
-            --orange-400: #fb923c;
-            --bg: #fafafa;
-            --fg: #09090b;
-            --card: #ffffff;
-            --muted: #f5f5f5;
-            --muted-text: #717175;
-            --border: #e4e4e7;
-        }
+      :root {
+        --background: 0, 0%, 100%;
+        --foreground: 240, 10%, 4%;
+        --card: 0, 0%, 100%;
+        --card-foreground: 240, 10%, 4%;
+        --popover: 0, 0%, 100%;
+        --popover-foreground: 240, 10%, 4%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 5%, 96%;
+        --secondary-foreground: 240, 6%, 10%;
+        --muted: 240, 5%, 96%;
+        --muted-foreground: 240, 4%, 46%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 84%, 60%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 6%, 90%;
+        --input: 240, 6%, 90%;
+        --ring: 350, 89%, 60%;
+        --radius: 0.75rem;
+        --rose: 350, 89%, 60%;
+        --lime: 83, 78%, 68%;
+        --rose-500: #ec4899;
+        --orange-400: #fb923c;
+      }
 
-        body.dark {
-            --bg: #0a0a0a;
-            --fg: #fafafa;
-            --card: #18181b;
-            --muted: #27272a;
-            --muted-text: #a1a1a5;
-            --border: #3f3f46;
-        }
+      .dark {
+        --background: 240, 6%, 4%;
+        --foreground: 0, 0%, 98%;
+        --card: 240, 6%, 10%;
+        --card-foreground: 0, 0%, 98%;
+        --popover: 240, 6%, 10%;
+        --popover-foreground: 0, 0%, 98%;
+        --primary: 350, 89%, 60%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 240, 4%, 16%;
+        --secondary-foreground: 0, 0%, 98%;
+        --muted: 240, 4%, 16%;
+        --muted-foreground: 240, 5%, 65%;
+        --accent: 83, 78%, 68%;
+        --accent-foreground: 0, 0%, 0%;
+        --destructive: 0, 63%, 31%;
+        --destructive-foreground: 0, 0%, 98%;
+        --border: 240, 4%, 16%;
+        --input: 240, 4%, 16%;
+        --ring: 350, 89%, 60%;
+      }
 
-        html {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+      html {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Outfit', sans-serif;
-        }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Outfit", sans-serif;
+      }
 
-        body {
-            background-color: var(--bg);
-            color: var(--fg);
-            transition: background-color 0.3s, color 0.3s;
-        }
+      body {
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            z-index: 50;
-            width: 100%;
-            border-bottom: 1px solid var(--border);
-            background: rgba(var(--bg-rgb, 250), 0.8);
-            backdrop-filter: blur(10px);
-        }
+      /* Header */
+      header {
+        position: fixed;
+        top: 0;
+        z-index: 50;
+        width: 100%;
+        border-bottom: 1px solid hsl(var(--border));
+        background: hsla(var(--background), 0.8);
+        backdrop-filter: blur(10px);
+      }
 
-        .header-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-            padding: 0 24px;
-        }
+      .header-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        padding: 0 24px;
+      }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: var(--fg);
-        }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: hsl(var(--foreground));
+      }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-        }
+      .logo-icon img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+      }
 
-        .logo-text {
-            font-size: 20px;
-            font-weight: bold;
-        }
+      .logo-text {
+        font-size: 20px;
+        font-weight: bold;
+      }
 
+      nav {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: hsl(var(--muted-foreground));
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      nav a:hover {
+        color: hsl(var(--foreground));
+      }
+
+      @media (max-width: 768px) {
         nav {
-            display: flex;
-            gap: 32px;
-            align-items: center;
+          display: none;
         }
+      }
 
-        nav a {
-            text-decoration: none;
-            color: var(--muted-text);
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+      .header-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
 
-        nav a:hover {
-            color: var(--fg);
-        }
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-        }
+      .btn-ghost {
+        background: transparent;
+        color: hsl(var(--foreground));
+        border: 1px solid transparent;
+      }
 
-        .header-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+      .btn-ghost:hover {
+        background: hsl(var(--muted));
+      }
 
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        color: white;
+        box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.25);
+      }
 
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px -5px rgba(236, 72, 153, 0.35);
+      }
+
+      @media (max-width: 768px) {
         .btn-ghost {
-            background: transparent;
-            color: var(--fg);
-            border: 1px solid transparent;
+          display: none;
         }
+      }
 
-        .btn-ghost:hover {
-            background: var(--muted);
+      /* Hero Section */
+      .hero {
+        margin-top: 64px;
+        padding: 80px 24px;
+        max-width: 1280px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          hsla(350, 89%, 60%, 0.05),
+          transparent
+        );
+        pointer-events: none;
+      }
+
+      .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        align-items: center;
+        position: relative;
+      }
+
+      .hero-text h1 {
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 24px;
+        color: hsl(var(--foreground));
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-text p {
+        font-size: 18px;
+        color: hsl(var(--muted-foreground));
+        margin-bottom: 32px;
+        max-width: 500px;
+        line-height: 1.6;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+      }
+
+      .btn-lg {
+        padding: 14px 32px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .stats {
+        display: flex;
+        gap: 32px;
+        margin-top: 40px;
+      }
+
+      .stat {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        font-family: "Outfit", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: hsl(var(--foreground));
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: hsl(var(--muted-foreground));
+      }
+
+      .star-icon {
+        color: #fbbf24;
+      }
+
+      .hero-visual {
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+
+      .phone-mockup {
+        width: 300px;
+        border: 8px solid #1f2937;
+        border-radius: 48px;
+        background: #111827;
+        padding: 8px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        position: relative;
+      }
+
+      .phone-notch {
+        position: absolute;
+        left: 50%;
+        top: 16px;
+        width: 96px;
+        height: 24px;
+        background: #1f2937;
+        border-radius: 24px;
+        transform: translateX(-50%);
+        z-index: 10;
+      }
+
+      .phone-screen {
+        width: 100%;
+        height: 600px;
+        border-radius: 40px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .phone-screen img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .phone-screen .gradient-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        pointer-events: none;
+      }
+
+      .phone-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        color: white;
+      }
+
+      .phone-profile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .phone-profile-info h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 4px;
+      }
+
+      .phone-profile-info p {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .phone-heart-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--rose-500);
+        font-size: 24px;
+        transition: all 0.3s;
+      }
+
+      .phone-heart-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      .floating-card {
+        position: absolute;
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
-            color: white;
-            box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.25);
+        50% {
+          transform: translateY(-10px);
         }
+      }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px -5px rgba(244, 63, 94, 0.35);
-        }
+      .floating-left {
+        left: 80px;
+        top: 80px;
+      }
 
-        @media (max-width: 768px) {
-            .btn-ghost {
-                display: none;
-            }
-        }
+      .floating-right {
+        right: 80px;
+        bottom: 128px;
+        animation: float 8s ease-in-out infinite;
+      }
 
-        /* Hero Section */
-        .hero {
-            margin-top: 64px;
-            padding: 80px 24px;
-            max-width: 1280px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+      .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
 
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(244, 63, 94, 0.05), transparent);
-            pointer-events: none;
-        }
+      .icon-badge.rose {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: var(--rose-500);
+      }
 
+      .icon-badge.lime {
+        background: hsla(83, 78%, 68%, 0.1);
+        color: #bef264;
+      }
+
+      @media (max-width: 1024px) {
         .hero-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            align-items: center;
-            position: relative;
-        }
-
-        .hero-text h1 {
-            font-size: 56px;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 24px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-text p {
-            font-size: 18px;
-            color: var(--muted-text);
-            margin-bottom: 32px;
-            max-width: 500px;
-            line-height: 1.6;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .btn-lg {
-            padding: 14px 32px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .stats {
-            display: flex;
-            gap: 32px;
-            margin-top: 40px;
-        }
-
-        .stat {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            font-family: 'Outfit', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--muted-text);
-        }
-
-        .star-icon {
-            color: #fbbf24;
+          grid-template-columns: 1fr;
         }
 
         .hero-visual {
-            display: flex;
-            justify-content: center;
-            position: relative;
-        }
-
-        .phone-mockup {
-            width: 300px;
-            border: 8px solid #1f2937;
-            border-radius: 48px;
-            background: #111827;
-            padding: 8px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-        }
-
-        .phone-notch {
-            position: absolute;
-            left: 50%;
-            top: 16px;
-            width: 96px;
-            height: 24px;
-            background: #1f2937;
-            border-radius: 24px;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-
-        .phone-mockup img {
-            width: 100%;
-            height: 600px;
-            border-radius: 40px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .card-overlay {
-            position: absolute;
-            bottom: 32px;
-            left: 16px;
-            right: 16px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .profile-info h3 {
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .profile-info p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-        }
-
-        .heart-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--rose-500);
-            font-size: 24px;
-            transition: all 0.3s;
-        }
-
-        .heart-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+          order: -1;
         }
 
         .floating-card {
-            position: absolute;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: float 6s ease-in-out infinite;
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero {
+          padding: 40px 20px;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .hero-text h1 {
+          font-size: 36px;
         }
 
-        .floating-left {
-            left: -80px;
-            top: 80px;
+        .stats {
+          gap: 24px;
+          margin-top: 32px;
         }
+      }
 
-        .floating-right {
-            right: -80px;
-            bottom: 128px;
-            animation: float 8s ease-in-out infinite;
-        }
+      /* Features Section */
+      .features {
+        padding: 80px 24px;
+        background: hsl(var(--muted));
+      }
 
-        .icon-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
+      .features-container {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
 
-        .icon-badge.rose {
-            background: rgba(244, 63, 94, 0.1);
-            color: var(--rose-500);
-        }
+      .section-header {
+        text-align: center;
+        margin-bottom: 64px;
+      }
 
-        .icon-badge.lime {
-            background: rgba(190, 242, 100, 0.1);
-            color: #bef264;
-        }
+      .section-badge {
+        display: inline-block;
+        background: hsl(var(--card));
+        color: var(--rose-500);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        border: 1px solid var(--rose-500);
+      }
 
-        @media (max-width: 1024px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-            }
+      .section-header h2 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: hsl(var(--foreground));
+      }
 
-            .hero-visual {
-                order: -1;
-            }
+      .section-header p {
+        font-size: 16px;
+        color: hsl(var(--muted-foreground));
+        max-width: 600px;
+        margin: 0 auto;
+      }
 
-            .floating-card {
-                display: none;
-            }
-        }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 32px;
+      }
 
-        @media (max-width: 768px) {
-            .hero {
-                padding: 40px 20px;
-            }
+      .feature-card {
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
 
-            .hero-text h1 {
-                font-size: 36px;
-            }
+      .feature-card:hover {
+        border-color: hsla(350, 89%, 60%, 0.5);
+        transform: translateY(-4px);
+      }
 
-            .stats {
-                gap: 24px;
-                margin-top: 32px;
-            }
-        }
+      .feature-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 16px;
+      }
 
-        /* Features Section */
-        .features {
-            padding: 80px 24px;
-            background: var(--muted);
-        }
+      .feature-icon.rose {
+        background: hsla(350, 89%, 60%, 0.1);
+        color: var(--rose-500);
+      }
 
-        .features-container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
+      .feature-icon.blue {
+        background: hsla(217, 91%, 60%, 0.1);
+        color: #60a5fa;
+      }
 
-        .section-header {
-            text-align: center;
-            margin-bottom: 64px;
-        }
+      .feature-icon.lime {
+        background: hsla(83, 78%, 68%, 0.1);
+        color: #bef264;
+      }
 
-        .section-badge {
-            display: inline-block;
-            background: white;
-            color: var(--fg);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
+      .feature-icon.purple {
+        background: hsla(271, 91%, 65%, 0.1);
+        color: #a855f7;
+      }
 
-        body.dark .section-badge {
-            background: var(--card);
-        }
+      .feature-card h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: hsl(var(--foreground));
+      }
 
-        .section-header h2 {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
+      .feature-card p {
+        font-size: 14px;
+        color: hsl(var(--muted-foreground));
+        line-height: 1.6;
+      }
 
-        .section-header p {
-            font-size: 16px;
-            color: var(--muted-text);
-            max-width: 600px;
-            margin: 0 auto;
-        }
+      /* CTA Section */
+      .cta-section {
+        padding: 80px 24px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-        }
+      .cta-box {
+        background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
+        border-radius: 24px;
+        padding: 64px 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .feature-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
+      .cta-box::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='white' stroke-opacity='0.1' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%' height='100%' fill='url(%23grid)'/%3E%3C/svg%3E");
+        opacity: 0.3;
+        pointer-events: none;
+      }
 
-        .feature-card:hover {
-            border-color: rgba(244, 63, 94, 0.5);
-            transform: translateY(-4px);
-        }
+      .cta-content {
+        position: relative;
+        z-index: 10;
+      }
 
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 16px;
-        }
+      .cta-box h2 {
+        font-size: 40px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+      }
 
-        .feature-icon.rose {
-            background: rgba(244, 63, 94, 0.1);
-            color: var(--rose-500);
-        }
+      .cta-box p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 500px;
+        margin-bottom: 32px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
 
-        .feature-icon.blue {
-            background: rgba(96, 165, 250, 0.1);
-            color: #60a5fa;
-        }
+      .cta-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
 
-        .feature-icon.lime {
-            background: rgba(190, 242, 100, 0.1);
-            color: #bef264;
-        }
+      .btn-white {
+        background: white;
+        color: var(--rose-500);
+      }
 
-        .feature-icon.purple {
-            background: rgba(168, 85, 247, 0.1);
-            color: #a855f7;
-        }
+      .btn-white:hover {
+        background: rgba(255, 255, 255, 0.9);
+      }
 
-        .feature-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+      .cta-box .small-text {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+      }
 
-        .feature-card p {
-            font-size: 14px;
-            color: var(--muted-text);
-            line-height: 1.6;
-        }
+      /* Footer */
+      footer {
+        border-top: 1px solid hsl(var(--border));
+        padding: 48px 24px;
+        background: hsl(var(--background));
+      }
 
-        /* CTA Section */
-        .cta-section {
-            padding: 80px 24px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
+      .footer-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
 
-        .cta-box {
-            background: linear-gradient(135deg, var(--rose-500), var(--orange-400));
-            border-radius: 24px;
-            padding: 64px 24px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        .cta-box::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='white' stroke-opacity='0.1' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%' height='100%' fill='url(%23grid)'/%3E%3C/svg%3E");
-            opacity: 0.3;
-            pointer-events: none;
-        }
+      .footer-links {
+        display: flex;
+        gap: 24px;
+      }
 
-        .cta-content {
-            position: relative;
-            z-index: 10;
-        }
+      .footer-links a {
+        text-decoration: none;
+        color: hsl(var(--muted-foreground));
+        font-size: 14px;
+        transition: color 0.3s;
+      }
 
-        .cta-box h2 {
-            font-size: 40px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 16px;
-        }
+      .footer-links a:hover {
+        color: hsl(var(--foreground));
+      }
 
-        .cta-box p {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 500px;
-            margin-bottom: 32px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
+      .footer-text {
+        font-size: 14px;
+        color: hsl(var(--muted-foreground));
+      }
 
-        .cta-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
+      /* Theme Toggle */
+      .theme-toggle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: hsl(var(--muted));
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: all 0.3s;
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 40;
+        color: hsl(var(--foreground));
+      }
 
-        .btn-white {
-            background: white;
-            color: var(--rose-500);
-        }
+      .theme-toggle:hover {
+        background: hsl(var(--card));
+        transform: scale(1.1);
+      }
 
-        .btn-white:hover {
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .cta-box .small-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 48px 24px;
-            background: var(--bg);
-        }
-
+      @media (max-width: 768px) {
         .footer-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+          justify-content: center;
+          text-align: center;
         }
 
         .footer-links {
-            display: flex;
-            gap: 24px;
+          justify-content: center;
         }
-
-        .footer-links a {
-            text-decoration: none;
-            color: var(--muted-text);
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--fg);
-        }
-
-        .footer-text {
-            font-size: 14px;
-            color: var(--muted-text);
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--muted);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.3s;
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 40;
-        }
-
-        .theme-toggle:hover {
-            background: var(--card);
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .footer-container {
-                justify-content: center;
-                text-align: center;
-            }
-
-            .footer-links {
-                justify-content: center;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <div class="header-container">
-            <a href="#" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-sparkles"></i>
-                </div>
-                <span class="logo-text">SpurtLinks</span>
-            </a>
-            
-            <nav>
-                <a href="#features">Features</a>
-                <a href="#about">About</a>
-                <a href="#pricing">Pricing</a>
-            </nav>
-            
-            <div class="header-buttons">
-                <button class="btn btn-ghost">Log In</button>
-                <button class="btn btn-primary">Get Started</button>
-            </div>
+      <div class="header-container">
+        <a href="#" class="logo">
+          <div class="logo-icon">
+            <img src="logo.png" alt="SpurtLinks" />
+          </div>
+          <span class="logo-text">SpurtLinks</span>
+        </a>
+
+        <nav>
+          <a href="#features">Features</a>
+          <a href="#about">About</a>
+          <a href="#pricing">Pricing</a>
+        </nav>
+
+        <div class="header-buttons">
+          <a href="login.html" class="btn btn-ghost">Log In</a>
+          <a href="signup.html" class="btn btn-primary">Get Started</a>
         </div>
+      </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <div class="hero-text">
-                <div class="section-badge">
-                    <i class="fas fa-sparkles"></i> #1 Dating App of 2026
-                </div>
-                
-                <h1>Find Your <span class="gradient-text">Perfect Match</span></h1>
-                
-                <p>Connect with millions of people, discover meaningful relationships, and make lasting connections with SpurtLinks.</p>
-                
-                <div class="hero-actions">
-                    <button class="btn btn-lg btn-primary">
-                        Start for Free
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value">10M+</div>
-                        <div class="stat-label">Active Users</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">50M+</div>
-                        <div class="stat-label">Matches Made</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">4.9 <span class="star-icon"><i class="fas fa-star"></i></span></div>
-                        <div class="stat-label">App Rating</div>
-                    </div>
-                </div>
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="section-badge">
+            <i class="fas fa-sparkles"></i> #1 Dating App of 2026
+          </div>
+
+          <h1>Find Your <span class="gradient-text">Perfect Match</span></h1>
+
+          <p>
+            Connect with millions of people, discover meaningful relationships,
+            and make lasting connections with SpurtLinks.
+          </p>
+
+          <div class="hero-actions">
+            <a href="signup.html" class="btn btn-lg btn-primary">
+              Start for Free
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value">10M+</div>
+              <div class="stat-label">Active Users</div>
             </div>
-            
-            <div class="hero-visual">
-                <div class="phone-mockup">
-                    <div class="phone-notch"></div>
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=700&fit=crop" alt="App Preview">
-                    <div class="card-overlay">
-                        <div class="profile-info">
-                            <h3>Maya, 24</h3>
-                            <p>Brooklyn • 5 km away</p>
-                        </div>
-                        <button class="heart-btn">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="floating-card floating-left">
-                    <div class="icon-badge rose">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; font-size: 14px;">New Match!</div>
-                        <div style="font-size: 12px; color: var(--muted-text);">Just now</div>
-                    </div>
-                </div>
-                
-                <div class="floating-card floating-right">
-                    <div class="icon-badge lime">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; font-size: 14px;">Gift Received</div>
-                        <div style="font-size: 12px; color: var(--muted-text);">+$10.00</div>
-                    </div>
-                </div>
+            <div class="stat">
+              <div class="stat-value">50M+</div>
+              <div class="stat-label">Matches Made</div>
             </div>
+            <div class="stat">
+              <div class="stat-value">
+                4.9 <span class="star-icon"><i class="fas fa-star"></i></span>
+              </div>
+              <div class="stat-label">App Rating</div>
+            </div>
+          </div>
         </div>
+
+        <div class="hero-visual">
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=700&fit=crop"
+                alt="App Preview"
+              />
+              <div class="gradient-overlay"></div>
+              <div class="phone-content">
+                <div class="phone-profile">
+                  <div class="phone-profile-info">
+                    <h3>Maya, 24</h3>
+                    <p>Brooklyn • 5 km away</p>
+                  </div>
+                  <button class="phone-heart-btn">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-card floating-left">
+            <div class="icon-badge rose">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px">New Match!</div>
+              <div style="font-size: 12px; color: hsl(var(--muted-foreground))">
+                Just now
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-card floating-right">
+            <div class="icon-badge lime">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px">Gift Received</div>
+              <div style="font-size: 12px; color: hsl(var(--muted-foreground))">
+                +$10.00
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Features Section -->
     <section class="features" id="features">
-        <div class="features-container">
-            <div class="section-header">
-                <div class="section-badge">Features</div>
-                <h2>Everything You Need to Find Love</h2>
-                <p>SpurtLinks combines cutting-edge technology with thoughtful design to help you find meaningful connections.</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon rose">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3>Smart Matching</h3>
-                    <p>Our AI-powered algorithm finds your perfect match based on compatibility and interests.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon blue">
-                        <i class="fas fa-comment-dots"></i>
-                    </div>
-                    <h3>Real-time Chat</h3>
-                    <p>Connect instantly with your matches through our secure messaging platform.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon lime">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <h3>SpotPay Wallet</h3>
-                    <p>Send gifts, manage subscriptions, and handle payments all in one place.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon purple">
-                        <i class="fas fa-shield"></i>
-                    </div>
-                    <h3>Verified Profiles</h3>
-                    <p>Meet real people with our advanced verification system.</p>
-                </div>
-            </div>
+      <div class="features-container">
+        <div class="section-header">
+          <div class="section-badge">Features</div>
+          <h2>Everything You Need to Find Love</h2>
+          <p>
+            SpurtLinks combines cutting-edge technology with thoughtful design
+            to help you find meaningful connections.
+          </p>
         </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon rose">
+              <i class="fas fa-heart"></i>
+            </div>
+            <h3>Smart Matching</h3>
+            <p>
+              Our AI-powered algorithm finds your perfect match based on
+              compatibility and interests.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon blue">
+              <i class="fas fa-comment-dots"></i>
+            </div>
+            <h3>Real-time Chat</h3>
+            <p>
+              Connect instantly with your matches through our secure messaging
+              platform.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon lime">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <h3>SpotPay Wallet</h3>
+            <p>
+              Send gifts, manage subscriptions, and handle payments all in one
+              place.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon purple">
+              <i class="fas fa-shield"></i>
+            </div>
+            <h3>Verified Profiles</h3>
+            <p>Meet real people with our advanced verification system.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta-section">
-        <div class="cta-box">
-            <div class="cta-content">
-                <h2>Ready to Find Your Match?</h2>
-                <p>Join millions of users who have already found meaningful connections on SpurtLinks.</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-lg btn-white">
-                        Create Free Account
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                <p class="small-text">No credit card required. Start matching in minutes.</p>
-            </div>
+      <div class="cta-box">
+        <div class="cta-content">
+          <h2>Ready to Find Your Match?</h2>
+          <p>
+            Join millions of users who have already found meaningful connections
+            on SpurtLinks.
+          </p>
+          <div class="cta-buttons">
+            <a href="signup.html" class="btn btn-lg btn-white">
+              Create Free Account
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+          <p class="small-text">
+            No credit card required. Start matching in minutes.
+          </p>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-container">
-            <div class="footer-logo">
-                <div class="logo-icon">
-                    <i class="fas fa-sparkles"></i>
-                </div>
-                <span class="logo-text">SpurtLinks</span>
-            </div>
-            
-            <div class="footer-links">
-                <a href="#terms">Terms</a>
-                <a href="#privacy">Privacy</a>
-                <a href="#help">Help</a>
-            </div>
-            
-            <p class="footer-text">© 2026 SpurtLinks. All rights reserved.</p>
+      <div class="footer-container">
+        <div class="footer-logo">
+          <div class="logo-icon">
+            <img src="logo.png" alt="SpurtLinks" />
+          </div>
+          <span class="logo-text">SpurtLinks</span>
         </div>
+
+        <div class="footer-links">
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Help</a>
+        </div>
+
+        <p class="footer-text">© 2026 SpurtLinks. All rights reserved.</p>
+      </div>
     </footer>
 
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" title="Toggle dark mode">
-        <i class="fas fa-moon"></i>
-    </button>
-
     <script>
-        // Theme Toggle
-        const themeToggle = document.querySelector('.theme-toggle');
-        const htmlElement = document.documentElement;
+      // Theme Toggle
+      const themeToggle = document.querySelector(".theme-toggle");
+      const htmlElement = document.documentElement;
 
-        // Check for saved theme preference or default to light
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark');
-            themeToggle.querySelector('i').classList.remove('fa-moon');
-            themeToggle.querySelector('i').classList.add('fa-sun');
-        }
+      // Check for saved theme preference or default to light
+      const currentTheme = localStorage.getItem("spurtlinks-theme") || "light";
+      if (currentTheme === "dark") {
+        document.body.classList.add("dark");
+        themeToggle.querySelector("i").classList.remove("fa-moon");
+        themeToggle.querySelector("i").classList.add("fa-sun");
+      }
 
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-            const isDark = document.body.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            
-            // Update icon
-            const icon = themeToggle.querySelector('i');
-            icon.classList.toggle('fa-moon');
-            icon.classList.toggle('fa-sun');
-        });
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        const isDark = document.body.classList.contains("dark");
+        localStorage.setItem("spurtlinks-theme", isDark ? "dark" : "light");
 
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if (href !== '#' && document.querySelector(href)) {
-                    e.preventDefault();
-                    document.querySelector(href).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
+        // Update icon
+        const icon = themeToggle.querySelector("i");
+        icon.classList.toggle("fa-moon");
+        icon.classList.toggle("fa-sun");
+      });
+
+      // Smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href !== "#" && document.querySelector(href)) {
+            e.preventDefault();
+            document.querySelector(href).scrollIntoView({
+              behavior: "smooth",
             });
+          }
         });
+      });
 
-        // Button animations
-        document.querySelectorAll('.btn').forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-            });
-            btn.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
+      // Button animations
+      document.querySelectorAll(".btn").forEach((btn) => {
+        btn.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-2px)";
         });
+        btn.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0)";
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

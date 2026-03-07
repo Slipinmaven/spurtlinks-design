@@ -1,754 +1,408 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messages - SpurtLinks</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            /* Light theme (default) */
-            --background: 250 250 250;
-            --foreground: 9 9 11;
-            --card: 255 255 255;
-            --card-foreground: 9 9 11;
-            --popover: 255 255 255;
-            --popover-foreground: 9 9 11;
-            --primary: 350 89% 60%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 240 4.8% 95.9%;
-            --secondary-foreground: 240 5.9% 10%;
-            --muted: 240 4.8% 95.9%;
-            --muted-foreground: 240 3.8% 46.1%;
-            --accent: 83 78% 68%;
-            --accent-foreground: 0 0% 0%;
-            --destructive: 0 84.2% 60.2%;
-            --destructive-foreground: 0 0% 98%;
-            --border: 240 5.9% 90%;
-            --input: 240 5.9% 90%;
-            --ring: 350 89% 60%;
-            --radius: 0.75rem;
-            --rose-500: #ec4899;
-            --lime-400: #bef264;
-            --orange-400: #fb923c;
-            
-            /* RGB values for rgba usage */
-            --background-rgb: 250, 250, 250;
-            --card-rgb: 255, 255, 255;
-            --muted-rgb: 240, 240, 245;
-        }
-
-        .dark {
-            --background: 240 6% 4%;
-            --foreground: 0 0% 98%;
-            --card: 240 6% 10%;
-            --card-foreground: 0 0% 98%;
-            --popover: 240 6% 10%;
-            --popover-foreground: 0 0% 98%;
-            --primary: 350 89% 60%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 240 4% 16%;
-            --secondary-foreground: 0 0% 98%;
-            --muted: 240 4% 16%;
-            --muted-foreground: 240 5% 64.9%;
-            --accent: 83 78% 68%;
-            --accent-foreground: 0 0% 0%;
-            --destructive: 0 62.8% 30.6%;
-            --destructive-foreground: 0 0% 98%;
-            --border: 240 4% 16%;
-            --input: 240 4% 16%;
-            --ring: 350 89% 60%;
-            
-            --background-rgb: 10, 10, 15;
-            --card-rgb: 26, 26, 35;
-            --muted-rgb: 40, 40, 50;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: hsl(var(--background));
-            color: hsl(var(--foreground));
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        /* Desktop Sidebar */
-        .sidebar {
-            width: 80px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 40;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid hsla(var(--border), 0.5);
-            background: hsla(var(--card), 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .logo-area {
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-        }
-
-        .logo {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            background: linear-gradient(to bottom right, var(--rose-500), var(--orange-400));
-            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.25);
-            color: white;
-        }
-
-        .logo svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .nav-menu {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            color: hsl(var(--muted-foreground));
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            background: hsl(var(--muted));
-            color: hsl(var(--foreground));
-        }
-
-        .nav-item.active {
-            background: hsla(350, 89%, 60%, 0.1);
-            color: hsl(var(--primary));
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 4px;
-            height: 32px;
-            border-radius: 0 4px 4px 0;
-            background: hsl(var(--primary));
-            animation: slideIn 0.3s ease;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .nav-item .tooltip {
-            position: absolute;
-            left: 100%;
-            margin-left: 12px;
-            padding: 6px 12px;
-            background: hsl(var(--popover));
-            color: hsl(var(--popover-foreground));
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            z-index: 50;
-        }
-
-        .nav-item:hover .tooltip {
-            opacity: 1;
-        }
-
-        .settings-area {
-            padding: 16px;
-            border-top: 1px solid hsla(var(--border), 0.5);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 80px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        .messages-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: hsl(var(--background));
-        }
-
-        header {
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-            background: hsla(var(--background), 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 24px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        header h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: hsl(var(--foreground));
-        }
-
-        header p {
-            font-size: 14px;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .search-section {
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-            padding: 12px 24px;
-            background: hsla(var(--background), 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box svg {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: hsl(var(--muted-foreground));
-            pointer-events: none;
-        }
-
-        .search-input {
-            width: 100%;
-            height: 48px;
-            padding: 0 16px 0 48px;
-            border: 1px solid transparent;
-            border-radius: 24px;
-            background: hsla(var(--muted), 0.5);
-            color: hsl(var(--foreground));
-            font-size: 15px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .search-input::placeholder {
-            color: hsl(var(--muted-foreground));
-        }
-
-        .search-input:focus {
-            outline: none;
-            background: hsla(var(--muted), 0.7);
-            border-color: hsl(var(--ring));
-        }
-
-        .conversations {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .conversations::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .conversations::-webkit-scrollbar-track {
-            background: hsla(var(--muted), 0.3);
-        }
-
-        .conversations::-webkit-scrollbar-thumb {
-            background: hsla(var(--muted-foreground), 0.3);
-            border-radius: 3px;
-        }
-
-        .conversations::-webkit-scrollbar-thumb:hover {
-            background: hsla(var(--muted-foreground), 0.5);
-        }
-
-        .conversation-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px 24px;
-            text-decoration: none;
-            color: inherit;
-            transition: background 0.2s;
-            cursor: pointer;
-            border-bottom: 1px solid hsla(var(--border), 0.5);
-        }
-
-        .conversation-item:hover {
-            background: hsl(var(--muted));
-        }
-
-        .avatar-wrapper {
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: hsl(var(--card));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            font-weight: 600;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .online-indicator {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--lime-400);
-            border: 2px solid hsl(var(--background));
-        }
-
-        .conversation-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .conversation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .conversation-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: hsl(var(--foreground));
-        }
-
-        .conversation-time {
-            font-size: 12px;
-            color: hsl(var(--muted-foreground));
-            flex-shrink: 0;
-        }
-
-        .conversation-message {
-            font-size: 14px;
-            color: hsl(var(--muted-foreground));
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .conversation-message.unread {
-            color: hsl(var(--foreground));
-            font-weight: 500;
-        }
-
-        .unread-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: hsl(var(--primary));
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            flex-shrink: 0;
-            padding: 0 4px;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            padding: 24px;
-            color: hsl(var(--foreground));
-        }
-
-        .empty-icon {
-            width: 64px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: hsl(var(--card));
-            border-radius: 50%;
-            margin-bottom: 24px;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .empty-icon svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .empty-state p {
-            color: hsl(var(--muted-foreground));
-            font-size: 14px;
-        }
-
-        /* Theme toggle */
-        .theme-toggle {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: hsl(var(--muted-foreground));
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-            border: none;
-        }
-
-        .theme-toggle:hover {
-            background: hsl(var(--muted));
-            color: hsl(var(--foreground));
-        }
-
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 1024px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Desktop Sidebar -->
-    <aside class="sidebar">
-        <div class="logo-area">
-            <a href="/discover" class="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-            </a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <title>Chat - SpurtLinks</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="chat-list.css" />
+  </head>
+  <body class="dark">
+    <div class="app">
+      <aside class="spurtlinks-sidebar" id="spurtlinksSidebar">
+        <div class="sidebar-header">
+          <a href="/discover.html" class="logo">
+            <img src="logo.png" alt="logo" />
+            <span>SpurtLinks</span>
+          </a>
+          <button class="sidebar-close-btn" id="sidebarCloseBtn">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        
-        <nav class="nav-menu">
-            <a href="/discover" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2v20M2 12h20"/>
-                </svg>
-                <span class="tooltip">Discover</span>
-            </a>
-            
-            <a href="/matches" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-                <span class="tooltip">Matches</span>
-            </a>
-            
-            <a href="/chat" class="nav-item active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span class="tooltip">Chat</span>
-            </a>
-            
-            <a href="/wallet" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                    <line x1="16" y1="12" x2="16" y2="12.01"/>
-                </svg>
-                <span class="tooltip">Wallet</span>
-            </a>
-            
-            <a href="/profile" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <span class="tooltip">Profile</span>
-            </a>
-        </nav>
-        
-        <div class="settings-area">
-            <a href="/settings" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-                <span class="tooltip">Settings</span>
-            </a>
-            
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
-                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/>
-                    <line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-                <svg class="moon-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
+
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+        <div class="sidebar-footer">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon" style="display: none"></i>
+            <span class="nav-label">Dark mode</span>
+          </button>
         </div>
-    </aside>
+      </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="messages-container">
-            <header>
-                <h1>Messages</h1>
-                <p id="convCount">0 conversations</p>
-            </header>
+      <div class="content">
+        <header>
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1>
+            <i class="fas fa-comment" style="color: var(--rose-500)"></i>
+            Messages
+          </h1>
+          <div class="profile">
+            <i
+              class="fas fa-circle-user fa-xl"
+              style="color: var(--rose-500)"
+            ></i>
+          </div>
+        </header>
 
-            <div class="search-section">
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Search conversations..." onkeyup="filterConversations()">
+        <div class="main-content">
+          <div class="chat-header">
+            <h2>Chats</h2>
+          </div>
+
+          <div class="search-container">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search messages..."
+              />
+            </div>
+          </div>
+
+          <div class="chat-tabs">
+            <button class="chat-tab active">All</button>
+            <button class="chat-tab">Unread</button>
+            <button class="chat-tab">Matches</button>
+            <button class="chat-tab">Requests</button>
+          </div>
+
+          <div class="conversations-list">
+            <!-- Conversation 1 - Unread -->
+            <div class="conversation-item unread">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Sarah"
+                  />
                 </div>
+                <div class="online-indicator"></div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">
+                    Sarah Kimani
+                    <i class="fas fa-check-circle verified-badge"></i>
+                  </div>
+                  <span class="conversation-time">2m ago</span>
+                </div>
+                <div class="conversation-message unread">
+                  Hey! How are you? I was thinking we could grab coffee
+                  sometime...
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                  <span class="unread-badge">2</span>
+                </div>
+              </div>
             </div>
 
-            <div class="conversations" id="conversationsList">
-                <!-- Conversations will be populated here -->
+            <!-- Conversation 2 - Online, Typing -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Emma"
+                  />
+                </div>
+                <div class="online-indicator"></div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">Emma Rodriguez</div>
+                  <span class="conversation-time">5m ago</span>
+                </div>
+                <div class="typing-indicator">
+                  <div class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <span
+                    style="
+                      color: var(--rose-500);
+                      font-size: 11px;
+                      margin-left: 8px;
+                    "
+                    >typing...</span
+                  >
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check"></i>
+                    Sent
+                  </span>
+                </div>
+              </div>
             </div>
-        </div>
-    </main>
 
-    <script>
-        const mockMatches = [
-            {
-                id: '1',
-                user: { 
-                    name: 'Sarah Kimani', 
-                    photos: ['https://images.unsplash.com/photo-1494790108777-296ef5a5e8d6?w=100&h=100&fit=crop&auto=format'],
-                    online: true
-                },
-                lastMessage: { 
-                    text: 'That sounds amazing! 🎉', 
-                    fromMe: true, 
-                    sentAt: new Date(Date.now() - 1500000) 
-                },
-                hasNewMessage: false,
-                matchedAt: new Date(Date.now() - 172800000)
-            },
-            {
-                id: '2',
-                user: { 
-                    name: 'Emma Rodriguez', 
-                    photos: ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format'],
-                    online: false
-                },
-                lastMessage: { 
-                    text: 'You: When are you free?', 
-                    fromMe: true, 
-                    sentAt: new Date(Date.now() - 7200000) 
-                },
-                hasNewMessage: true,
-                matchedAt: new Date(Date.now() - 604800000)
-            },
-            {
-                id: '3',
-                user: { 
-                    name: 'Lisa Patel', 
-                    photos: ['https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&auto=format'],
-                    online: true
-                },
-                lastMessage: { 
-                    text: 'Haha, that\'s funny 😄', 
-                    fromMe: false, 
-                    sentAt: new Date(Date.now() - 1800000) 
-                },
-                hasNewMessage: false,
-                matchedAt: new Date(Date.now() - 86400000)
-            }
-        ];
+            <!-- Conversation 3 - Read -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Lisa"
+                  />
+                </div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">Lisa Patel</div>
+                  <span class="conversation-time">1h ago</span>
+                </div>
+                <div class="conversation-message">
+                  Thanks for the great conversation! Let's do this again soon.
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        function formatDate(date) {
-            const now = new Date();
-            const diff = now - new Date(date);
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-            
-            if (minutes < 60) return minutes + 'm ago';
-            if (hours < 24) return hours + 'h ago';
-            if (days < 7) return days + 'd ago';
-            return '1w ago';
-        }
+            <!-- Conversation 4 - Image message -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Jessica"
+                  />
+                </div>
+                <div class="online-indicator"></div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">Jessica Thompson</div>
+                  <span class="conversation-time">3h ago</span>
+                </div>
+                <div class="conversation-message">
+                  <i class="fas fa-image" style="margin-right: 4px"></i> Photo
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        function renderConversations() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = mockMatches.filter(m => 
-                m.user.name.toLowerCase().includes(searchTerm)
-            );
+            <!-- Conversation 5 - GIF message -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="Michael"
+                  />
+                </div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">Michael Chen</div>
+                  <span class="conversation-time">5h ago</span>
+                </div>
+                <div class="conversation-message">
+                  <i class="fas fa-file-video" style="margin-right: 4px"></i>
+                  GIF
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check"></i>
+                    Delivered
+                  </span>
+                </div>
+              </div>
+            </div>
 
-            const conversationsList = document.getElementById('conversationsList');
-            document.getElementById('convCount').textContent = mockMatches.length + ' conversation' + (mockMatches.length !== 1 ? 's' : '');
+            <!-- Conversation 6 - Voice message -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <img
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80"
+                    alt="David"
+                  />
+                </div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">David Omondi</div>
+                  <span class="conversation-time">Yesterday</span>
+                </div>
+                <div class="conversation-message">
+                  <i class="fas fa-microphone" style="margin-right: 4px"></i>
+                  Voice message (0:24)
+                </div>
+                <div class="message-meta">
+                  <span class="message-status">
+                    <i class="fas fa-check-double"></i>
+                    Read
+                  </span>
+                </div>
+              </div>
+            </div>
 
-            if (filtered.length === 0) {
-                conversationsList.innerHTML = `
-                    <div class="empty-state">
+            <!-- Conversation 7 - Match request -->
+            <div class="conversation-item">
+              <div class="avatar-wrapper">
+                <div class="avatar">
+                  <span>👤</span>
+                </div>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-header">
+                  <div class="conversation-name">Match Request</div>
+                  <span class="conversation-time">2d ago</span>
+                </div>
+                <div class="conversation-message">
+                  James wants to connect with you
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px">
+                  <button
+                    style="
+                      padding: 4px 12px;
+                      border-radius: 20px;
+                      background: var(--lime-400);
+                      color: black;
+                      border: none;
+                      font-size: 12px;
+                      font-weight: 600;
+                      cursor: pointer;
+                    "
+                  >
+                    Accept
+                  </button>
+                  <button
+                    style="
+                      padding: 4px 12px;
+                      border-radius: 20px;
+                      background: transparent;
+                      border: 1px solid hsla(var(--border), 0.5);
+                      color: hsl(var(--muted-foreground));
+                      font-size: 12px;
+                      cursor: pointer;
+                    "
+                  >
+                    Decline
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty state (hidden by default, show when no conversations) -->
+            <!-- <div class="empty-state">
                         <div class="empty-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
+                            <i class="fas fa-comments"></i>
                         </div>
-                        <h3>${searchTerm ? 'No conversations found' : 'No messages yet'}</h3>
-                        <p>${searchTerm ? 'Try a different search term' : 'Match with someone and start chatting!'}</p>
-                    </div>
-                `;
-                return;
+                        <h3>No messages yet</h3>
+                        <p>Match with someone and start a conversation!</p>
+                        <button class="find-match-btn">Find Matches</button>
+                    </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+      <div class="mobile-nav-items">
+        <a href="/discover.html" class="mobile-nav-item">
+          <i class="fas fa-compass"></i>
+          <span>Discover</span>
+        </a>
+        <a href="/matches.html" class="mobile-nav-item">
+          <i class="fas fa-heart"></i>
+          <span>Matches</span>
+        </a>
+        <a href="/chat.html" class="mobile-nav-item active">
+          <i class="fas fa-comment"></i>
+          <span>Chat</span>
+        </a>
+        <a href="/wallet.html" class="mobile-nav-item">
+          <i class="fas fa-wallet"></i>
+          <span>Wallet</span>
+        </a>
+        <a href="/profile.html" class="mobile-nav-item">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </div>
+    </nav>
+
+    <script src="sidebar.js"></script>
+    <script>
+      // Search functionality
+      document
+        .querySelector(".search-input")
+        ?.addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const conversations = document.querySelectorAll(".conversation-item");
+
+          conversations.forEach((conv) => {
+            const name = conv
+              .querySelector(".conversation-name")
+              ?.textContent.toLowerCase();
+            const message = conv
+              .querySelector(".conversation-message")
+              ?.textContent.toLowerCase();
+
+            if (name?.includes(searchTerm) || message?.includes(searchTerm)) {
+              conv.style.display = "flex";
+            } else {
+              conv.style.display = "none";
             }
+          });
+        });
 
-            conversationsList.innerHTML = filtered.map(match => `
-                <div class="conversation-item" onclick="openChat('${match.id}')">
-                    <div class="avatar-wrapper">
-                        <div class="avatar">
-                            <img src="${match.user.photos[0]}" alt="${match.user.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'56\' height=\'56\' viewBox=\'0 0 56 56\'%3E%3Crect width=\'56\' height=\'56\' fill=\'%23ec4899\' opacity=\'0.2\'/%3E%3Ctext x=\'28\' y=\'35\' font-family=\'Arial\' font-size=\'20\' fill=\'%23ec4899\' text-anchor=\'middle\'%3E${match.user.name.charAt(0)}%3C/text%3E%3C/svg%3E'">
-                        </div>
-                        ${match.user.online ? '<div class="online-indicator"></div>' : ''}
-                    </div>
-                    
-                    <div class="conversation-content">
-                        <div class="conversation-header">
-                            <span class="conversation-name">${match.user.name}</span>
-                            <span class="conversation-time">${formatDate(match.lastMessage.sentAt)}</span>
-                        </div>
-                        <div class="conversation-message ${match.hasNewMessage ? 'unread' : ''}">
-                            ${match.lastMessage.text}
-                        </div>
-                    </div>
-                    
-                    ${match.hasNewMessage ? '<div class="unread-badge">1</div>' : ''}
-                </div>
-            `).join('');
-        }
+      // Tab switching
+      document.querySelectorAll(".chat-tab").forEach((tab) => {
+        tab.addEventListener("click", function () {
+          document
+            .querySelectorAll(".chat-tab")
+            .forEach((t) => t.classList.remove("active"));
+          this.classList.add("active");
 
-        function filterConversations() {
-            renderConversations();
-        }
+          const tabName = this.textContent.trim();
+          const conversations = document.querySelectorAll(".conversation-item");
 
-        function openChat(id) {
-            console.log('Opening chat with match ' + id);
-            alert('Opening chat with match ' + id);
-        }
+          if (tabName === "All") {
+            conversations.forEach((conv) => (conv.style.display = "flex"));
+          } else if (tabName === "Unread") {
+            conversations.forEach((conv) => {
+              if (conv.classList.contains("unread")) {
+                conv.style.display = "flex";
+              } else {
+                conv.style.display = "none";
+              }
+            });
+          }
+        });
+      });
 
-        // Theme toggle functionality
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-            const sunIcon = document.querySelector('.sun-icon');
-            const moonIcon = document.querySelector('.moon-icon');
-            sunIcon.classList.toggle('hidden');
-            moonIcon.classList.toggle('hidden');
-            
-            // Save preference
-            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-        }
-
-        // Load saved theme
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark');
-                document.querySelector('.sun-icon').classList.add('hidden');
-                document.querySelector('.moon-icon').classList.remove('hidden');
-            }
-        }
-
-        // Initial render
-        renderConversations();
-        loadTheme();
+      // Click on conversation
+      document.querySelectorAll(".conversation-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          window.location.href = "/chat-detail.html?id=" + Math.random();
+        });
+      });
     </script>
-</body>
+  </body>
 </html>
